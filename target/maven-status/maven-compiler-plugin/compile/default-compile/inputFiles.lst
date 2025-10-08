@@ -1,4 +1,8 @@
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\dao\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\model\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\service\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\Servlets\HomeServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\DBConnection.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\EvenementDAO.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\model\Evenement.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\model\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\service\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\EvenementServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\HomeServlet.java
