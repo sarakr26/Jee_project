@@ -1,4 +1,11 @@
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\dao\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\model\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\service\package-info.java
-C:\Users\Administrateur\Desktop\JEE\Jee_project\src\main\java\com\projet\jee\Servlets\HomeServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\DBConnection.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\dao\UtilisateurDAO.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\model\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\model\Utilisateur.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\service\package-info.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\HomeServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\LoginServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\LogoutServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\ProfileServlet.java
+C:\xampp\htdocs\projectjee\Jee_project\src\main\java\com\projet\jee\Servlets\RegisterServlet.java
