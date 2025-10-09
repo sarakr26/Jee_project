@@ -1,0 +1,6 @@
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:13:34 +0100] "GET /GestionClubsChess-1.0-SNAPSHOT/ HTTP/1.1" 200 9955 http-bio-8082-exec-1 881
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:14:07 +0100] "POST /GestionClubsChess-1.0-SNAPSHOT/login HTTP/1.1" 302 - http-bio-8082-exec-3 406
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:14:07 +0100] "GET /GestionClubsChess-1.0-SNAPSHOT/jsp/auth/profile.jsp HTTP/1.1" 200 1717 http-bio-8082-exec-4 83
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:14:09 +0100] "GET /GestionClubsChess-1.0-SNAPSHOT/logout HTTP/1.1" 302 - http-bio-8082-exec-5 2
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:14:09 +0100] "GET /GestionClubsChess-1.0-SNAPSHOT/ HTTP/1.1" 200 9955 http-bio-8082-exec-6 4
+0:0:0:0:0:0:0:1 - - [09/Oct/2025:20:14:12 +0100] "GET /GestionClubsChess-1.0-SNAPSHOT/register HTTP/1.1" 200 2960 http-bio-8082-exec-7 170
