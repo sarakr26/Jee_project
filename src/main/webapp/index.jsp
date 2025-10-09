@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -238,7 +239,14 @@
                 </div>
                 
                 <!-- Formulaire de connexion -->
-                <form class="login-form" action="login" method="post">
+                <c:if test="${not empty sessionScope.message}">
+                    <div class="alert alert-success" style="margin-bottom:16px">${sessionScope.message}</div>
+                    <c:remove var="message" scope="session" />
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" style="margin-bottom:16px">${error}</div>
+                </c:if>
+                <form class="login-form" action="${pageContext.request.contextPath}/login" method="post">
                     <div class="form-group">
                         <div class="input-group">
                             <i class="fas fa-envelope"></i>
@@ -249,7 +257,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                            <input type="password" id="motDePasse" name="motDePasse" placeholder="Mot de passe" required>
                         </div>
                     </div>
                     
@@ -262,7 +270,7 @@
                 <!-- Liens supplémentaires -->
                 <div class="login-footer">
                     <a href="#" class="forgot-password">Mot de passe oublié ?</a>
-                    <a href="#" class="register-link">Créer un compte</a>
+                    <a href="${pageContext.request.contextPath}/register" class="register-link">Créer un compte</a>
                 </div>
                 
                 <!-- Pièces d'échecs décoratives -->
