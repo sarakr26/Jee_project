@@ -129,4 +129,4 @@ INSERT INTO Club (nom, logo, description, statut, president_id) VALUES
 ('Échecs et Stratégie', NULL, 'Club moderne axé sur l''enseignement des stratégies avancées. Parfait pour les joueurs intermédiaires et avancés.', 'ACTIF', NULL),
 ('Les Pions d''Or', NULL, 'Club convivial pour débutants et amateurs. Ambiance chaleureuse et formations gratuites pour les nouveaux membres.', 'ACTIF', NULL),
 ('Académie des Échecs', NULL, 'Formation professionnelle d''échecs avec des entraîneurs certifiés. Préparation aux compétitions nationales et internationales.', 'ACTIF', NULL),
-('Club des Champions', NULL, 'Rejoignez l''élite des joueurs d''échecs ! Club compétitif avec des membres classés et des tournois réguliers.', 'ACTIF', NULL);
+('Club des Champions', NULL, 'Rejoignez l''élite des joueurs d''échecs ! Club compétitif avec des membres classés et des tournois réguliers.', 'ACTIF', NULL)
