@@ -50,7 +50,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <port>8082</port>
+                    <port>8083</port>
                     <!-- Force the webapp context path to include version to match old URLs -->
                     <path>/GestionClubsChess-1.0-SNAPSHOT</path>
                 </configuration>
