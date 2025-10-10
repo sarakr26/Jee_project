@@ -8,6 +8,12 @@ public class DemandeIntegration {
     private String statut;
     private Long membreId;
     private Long clubId;
+    
+    // Informations supplémentaires pour l'affichage
+    private String membreNom;
+    private String membrePrenom;
+    private String membreEmail;
+    private String clubNom;
 
     public Long getId() {
         return id;
@@ -47,6 +53,38 @@ public class DemandeIntegration {
 
     public void setClubId(Long clubId) {
         this.clubId = clubId;
+    }
+
+    public String getMembreNom() {
+        return membreNom;
+    }
+
+    public void setMembreNom(String membreNom) {
+        this.membreNom = membreNom;
+    }
+
+    public String getMembrePrenom() {
+        return membrePrenom;
+    }
+
+    public void setMembrePrenom(String membrePrenom) {
+        this.membrePrenom = membrePrenom;
+    }
+
+    public String getMembreEmail() {
+        return membreEmail;
+    }
+
+    public void setMembreEmail(String membreEmail) {
+        this.membreEmail = membreEmail;
+    }
+
+    public String getClubNom() {
+        return clubNom;
+    }
+
+    public void setClubNom(String clubNom) {
+        this.clubNom = clubNom;
     }
 }
 

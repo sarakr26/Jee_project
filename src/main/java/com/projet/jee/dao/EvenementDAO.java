@@ -31,6 +31,25 @@ public class EvenementDAO {
     }
 
     /**
+     * Récupère tous les événements créés par la fédération (tous statuts confondus)
+     */
+    public List<Evenement> getEvenementsByFederation() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE federation_id IS NOT NULL ORDER BY dateDebut DESC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                evenements.add(mapRow(rs));
+            }
+        }
+        return evenements;
+    }
+
+    /**
      * Récupère tous les événements (tous statuts)
      */
     public List<Evenement> getAllEvenements() throws SQLException {

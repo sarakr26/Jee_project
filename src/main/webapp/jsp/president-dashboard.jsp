@@ -2,6 +2,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.projet.jee.model.Evenement" %>
 <%@ page import="com.projet.jee.model.DemandeCreationClub" %>
+<%@ page import="com.projet.jee.model.DemandeIntegration" %>
+<%@ page import="com.projet.jee.model.Club" %>
 <%@ page import="com.projet.jee.model.Utilisateur" %>
 <%
     Utilisateur currentUser = (Utilisateur) session.getAttribute("currentUser");
@@ -11,6 +13,8 @@
     }
     List<Evenement> evenements = (List<Evenement>) request.getAttribute("evenements");
     List<DemandeCreationClub> demandes = (List<DemandeCreationClub>) request.getAttribute("demandes");
+    List<DemandeIntegration> demandesIntegration = (List<DemandeIntegration>) request.getAttribute("demandesIntegration");
+    Club presidentClub = (Club) request.getAttribute("presidentClub");
 %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -182,9 +186,20 @@
             border-radius: 15px;
             font-size: 0.85rem;
             font-weight: 600;
-            background: #4CAF50;
             color: white;
             margin-top: 10px;
+        }
+
+        .event-status.PLANIFIE {
+            background: #4CAF50;
+        }
+
+        .event-status.ANNULE {
+            background: #dc3545;
+        }
+
+        .event-status.TERMINE {
+            background: #6c757d;
         }
 
         .modal {
@@ -368,6 +383,85 @@
             color: #666;
             font-size: 1rem;
         }
+
+        .member-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .member-info strong {
+            color: #1e3c72;
+        }
+
+        .demande-integration-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .demande-integration-info {
+            flex: 1;
+        }
+
+        .demande-integration-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-accept {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-accept:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .club-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -435,7 +529,7 @@
                                         <div><i class="fas fa-info-circle"></i> <%= evt.getDescription() %></div>
                                     <% } %>
                                 </div>
-                                <span class="event-status"><%= evt.getStatut() %></span>
+                                <span class="event-status <%= evt.getStatut() %>"><%= evt.getStatut() %></span>
                             </div>
                         <% } %>
                     </div>
@@ -481,6 +575,63 @@
                     </div>
                 <% } %>
             </div>
+
+            <!-- Section Demandes d'Intégration -->
+            <% if (presidentClub != null) { %>
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Demandes d'Intégration au Club
+                    </h2>
+                </div>
+                
+                <div class="club-badge">
+                    <i class="fas fa-chess-knight"></i>
+                    <%= presidentClub.getNom() %>
+                </div>
+                
+                <% if (demandesIntegration != null && !demandesIntegration.isEmpty()) { %>
+                    <div class="demandes-list">
+                        <% for (DemandeIntegration demandeInt : demandesIntegration) { %>
+                            <div class="demande-integration-item">
+                                <div class="demande-integration-info">
+                                    <div class="member-info">
+                                        <div><strong><i class="fas fa-user"></i> <%= demandeInt.getMembrePrenom() %> <%= demandeInt.getMembreNom() %></strong></div>
+                                        <div style="color: #666;"><i class="fas fa-envelope"></i> <%= demandeInt.getMembreEmail() %></div>
+                                        <div style="color: #999; font-size: 0.9rem;"><i class="fas fa-clock"></i> Demande envoyée le <%= demandeInt.getDateDemande() %></div>
+                                    </div>
+                                    <span class="demande-status status-<%= demandeInt.getStatut() %>"><%= demandeInt.getStatut() %></span>
+                                </div>
+                                
+                                <% if ("EN_ATTENTE".equals(demandeInt.getStatut())) { %>
+                                <div class="demande-integration-actions">
+                                    <form action="<%= request.getContextPath() %>/president/accepter-demande" method="post" style="margin: 0;">
+                                        <input type="hidden" name="demandeId" value="<%= demandeInt.getId() %>">
+                                        <button type="submit" class="btn-accept">
+                                            <i class="fas fa-check"></i> Accepter
+                                        </button>
+                                    </form>
+                                    <form action="<%= request.getContextPath() %>/president/refuser-demande" method="post" style="margin: 0;">
+                                        <input type="hidden" name="demandeId" value="<%= demandeInt.getId() %>">
+                                        <button type="submit" class="btn-reject">
+                                            <i class="fas fa-times"></i> Refuser
+                                        </button>
+                                    </form>
+                                </div>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="empty-message">
+                        <i class="fas fa-user-plus"></i>
+                        <p>Aucune demande d'intégration pour le moment</p>
+                        <p style="font-size: 0.9rem; color: #bbb;">Les membres intéressés pourront rejoindre votre club via le système de demandes</p>
+                    </div>
+                <% } %>
+            </div>
+            <% } %>
         </div>
     </div>
 
