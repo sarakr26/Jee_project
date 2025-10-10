@@ -9,6 +9,10 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
+# Compiled files
+*.class
+*.log
+
 # IDE
 .idea/
 *.iml
@@ -20,4 +24,3 @@ buildNumber.properties
 # OS
 .DS_Store
 Thumbs.db
-
