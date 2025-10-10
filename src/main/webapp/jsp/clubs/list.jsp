@@ -9,6 +9,7 @@
 <c:if test="${not empty sessionScope.message}">
     <div class="message">${sessionScope.message}</div>
 </c:if>
+<p><a href="${pageContext.request.contextPath}/clubs?action=new">Nouveau club</a></p>
 <table border="1">
     <tr><th>ID</th><th>Nom</th><th>Adresse</th><th>Téléphone</th><th>Email</th><th>Action</th></tr>
     <c:forEach var="c" items="${clubs}">
@@ -21,6 +22,13 @@
             <td><a href="${pageContext.request.contextPath}/clubs?id=${c.id}">Détails</a></td>
         </tr>
     </c:forEach>
-</table>
+            <td>${c.federationId}</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/clubs?id=${c.id}">Détails</a>
+                |
+                <a href="${pageContext.request.contextPath}/clubs?action=edit&id=${c.id}">Edit</a>
+                |
+                <a href="${pageContext.request.contextPath}/clubs?action=delete&id=${c.id}" onclick="return confirm('Supprimer ?');">Delete</a>
+            </td>
 </body>
 </html>

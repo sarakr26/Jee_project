@@ -16,6 +16,8 @@
     <p>Téléphone: ${club.telephone}</p>
     <p>Email: ${club.email}</p>
     <p>Description: ${club.description}</p>
+    <p>Fédération: ${club.federationId}</p>
+    <p><a href="${pageContext.request.contextPath}/clubs?action=edit&id=${club.id}">Modifier</a></p>
 </c:if>
 <p><a href="${pageContext.request.contextPath}/clubs">Retour à la liste</a></p>
 </body>
