@@ -6,34 +6,104 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO pour la gestion des événements
+ */
 public class EvenementDAO {
 
-    public List<Evenement> findAll() throws SQLException {
-        List<Evenement> list = new ArrayList<>();
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id FROM Evenement";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+    /**
+     * Récupère tous les événements planifiés créés par la fédération
+     */
+    public List<Evenement> getAllEvenementsPlanifies() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE statut = 'PLANIFIE' ORDER BY dateDebut";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
             while (rs.next()) {
-                Evenement e = mapRow(rs);
-                list.add(e);
+                evenements.add(mapRow(rs));
             }
         }
-        return list;
+        return evenements;
     }
 
-    public Evenement findById(Long id) throws SQLException {
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id FROM Evenement WHERE id = ?";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
+    /**
+     * Récupère tous les événements créés par la fédération (tous statuts confondus)
+     */
+    public List<Evenement> getEvenementsByFederation() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE federation_id IS NOT NULL ORDER BY dateDebut DESC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                evenements.add(mapRow(rs));
+            }
+        }
+        return evenements;
+    }
+
+    /**
+     * Récupère tous les événements (tous statuts)
+     */
+    public List<Evenement> getAllEvenements() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement ORDER BY dateDebut DESC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                evenements.add(mapRow(rs));
+            }
+        }
+        return evenements;
+    }
+
+    /**
+     * Récupère un événement par son ID
+     */
+    public Evenement getEvenementById(Long id) throws SQLException {
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
         }
         return null;
     }
 
+    // Alias methods for compatibility
+    public List<Evenement> findAll() throws SQLException {
+        return getAllEvenements();
+    }
+
+    public Evenement findById(Long id) throws SQLException {
+        return getEvenementById(id);
+    }
+
+    /**
+     * Crée un nouvel événement
+     */
     public Evenement create(Evenement e) throws SQLException {
         String sql = "INSERT INTO Evenement (titre, description, lieu, dateDebut, dateFin, statut, federation_id) VALUES (?,?,?,?,?,?,?)";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection c = DBConnection.getConnection(); 
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, e.getTitre());
             ps.setString(2, e.getDescription());
             ps.setString(3, e.getLieu());
@@ -50,14 +120,21 @@ public class EvenementDAO {
         return e;
     }
 
+    /**
+     * Supprime un événement par son ID
+     */
     public boolean delete(Long id) throws SQLException {
         String sql = "DELETE FROM Evenement WHERE id = ?";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = DBConnection.getConnection(); 
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             return ps.executeUpdate() > 0;
         }
     }
 
+    /**
+     * Map un ResultSet vers un objet Evenement
+     */
     private Evenement mapRow(ResultSet rs) throws SQLException {
         Evenement e = new Evenement();
         e.setId(rs.getLong("id"));

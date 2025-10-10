@@ -12,7 +12,7 @@
     <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0">Événements</h1>
-        <a class="btn btn-primary" href="${pageContext.request.contextPath}/jsp/events/create.jsp">Créer un événement</a>
+        <a class="btn btn-primary" href="${pageContext.request.contextPath}/events/create">Créer un événement</a>
     </div>
 
     <c:if test="${not empty sessionScope.message}">

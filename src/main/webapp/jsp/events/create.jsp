@@ -18,7 +18,7 @@
             <c:if test="${not empty error}">
                 <div class="alert alert-danger" role="alert">${error}</div>
             </c:if>
-            <form method="post" action="${pageContext.request.contextPath}/events">
+            <form method="post" action="${pageContext.request.contextPath}/events/create">
                 <div class="mb-3">
                     <label class="form-label">Titre</label>
                     <input type="text" name="titre" class="form-control" value="${param.titre}" required/>
