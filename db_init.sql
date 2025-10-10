@@ -107,7 +107,26 @@ CREATE TABLE Activite (
   planning_id BIGINT NOT NULL,
   FOREIGN KEY (planning_id) REFERENCES Planning(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS DemandeCreationClub (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  nomClub VARCHAR(255) NOT NULL,
+  description TEXT,
+  dateDemande DATE NOT NULL,
+  statut ENUM('EN_ATTENTE', 'ACCEPTEE', 'REFUSEE') NOT NULL DEFAULT 'EN_ATTENTE',
+  president_id BIGINT NOT NULL,
+  FOREIGN KEY (president_id) REFERENCES Utilisateur(id) ON DELETE CASCADE
+);
+-
+INSERT INTO Evenement (titre, description, lieu, dateDebut, dateFin, statut, federation_id) VALUES
+('Tournoi National d''Échecs 2025', 'Grand tournoi national réunissant les meilleurs joueurs du pays. Ouvert à tous les niveaux.', 'Palais des Congrès, Paris', '2025-11-15', '2025-11-17', 'PLANIFIE', 4),
+('Championnat Régional', 'Compétition régionale pour promouvoir les jeunes talents.', 'Centre Sportif Municipal, Lyon', '2025-12-05', '2025-12-06', 'PLANIFIE', 4),
+('Tournoi Blitz d''Hiver', 'Tournoi de parties rapides pour tous les passionnés d''échecs.', 'Salle Polyvalente, Marseille', '2026-01-20', '2026-01-20', 'PLANIFIE', 4),
+('Festival des Échecs', 'Festival combinant tournois, ateliers et conférences avec des grands maîtres.', 'Espace Culturel, Toulouse', '2026-02-10', '2026-02-12', 'PLANIFIE', 4),
+('Open International de Printemps', 'Tournoi international ouvert à tous avec des prix attractifs.', 'Centre de Congrès, Nice', '2026-03-25', '2026-03-28', 'PLANIFIE', 4);
 
--- =================================================================
--- Fin du script
--- =================================================================
+INSERT INTO Club (nom, logo, description, statut, president_id) VALUES
+('Club Royal d''Échecs', NULL, 'Le club le plus ancien de la ville avec une histoire riche. Nous organisons des tournois hebdomadaires et des cours pour tous les niveaux.', 'ACTIF', NULL),
+('Échecs et Stratégie', NULL, 'Club moderne axé sur l''enseignement des stratégies avancées. Parfait pour les joueurs intermédiaires et avancés.', 'ACTIF', NULL),
+('Les Pions d''Or', NULL, 'Club convivial pour débutants et amateurs. Ambiance chaleureuse et formations gratuites pour les nouveaux membres.', 'ACTIF', NULL),
+('Académie des Échecs', NULL, 'Formation professionnelle d''échecs avec des entraîneurs certifiés. Préparation aux compétitions nationales et internationales.', 'ACTIF', NULL),
+('Club des Champions', NULL, 'Rejoignez l''élite des joueurs d''échecs ! Club compétitif avec des membres classés et des tournois réguliers.', 'ACTIF', NULL);

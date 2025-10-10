@@ -34,7 +34,15 @@ public class LoginServlet extends HttpServlet {
             }
             // store user in session
             req.getSession().setAttribute("currentUser", u);
-            resp.sendRedirect(req.getContextPath() + "/jsp/auth/profile.jsp");
+            
+            // Rediriger selon le rôle de l'utilisateur
+            if ("MEMBRE".equals(u.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/membre/dashboard");
+            } else if ("PRESIDENT".equals(u.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/president/dashboard");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/jsp/auth/profile.jsp");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("error", "Erreur lors de la connexion: " + e.getMessage());
