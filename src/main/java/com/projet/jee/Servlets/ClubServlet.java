@@ -54,7 +54,19 @@ public class ClubServlet extends HttpServlet {
                 return;
             }
             List<Club> list = dao.findAll();
+            // ensure there are some federations to choose from (dev convenience)
+            List<Federation> federations = federationDAO.findAll();
+            if (federations.isEmpty()) {
+                federationDAO.create(new Federation(){{ setNom("Fédération A"); setPays("France"); }});
+                federationDAO.create(new Federation(){{ setNom("Fédération B"); setPays("Maroc"); }});
+                federations = federationDAO.findAll();
+            }
+            // build a map id->name for easy lookup in JSP
+            java.util.Map<String,String> fMap = new java.util.HashMap<>();
+            for (Federation f : federations) fMap.put(String.valueOf(f.getId()), f.getNom());
+            req.setAttribute("federationMap", fMap);
             req.setAttribute("clubs", list);
+            req.setAttribute("federations", federations);
             req.getRequestDispatcher("/jsp/clubs/list.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
