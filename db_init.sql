@@ -25,10 +25,10 @@ CREATE TABLE Club (
 -- -----------------------------------------------------
 CREATE TABLE Utilisateur (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  nom VARCHAR(255) NOT NULL,
-  prenom VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  motDePasse VARCHAR(255) NOT NULL,
+  nom VARCHAR(100) NOT NULL,
+  prenom VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  motDePasse VARCHAR(100) NOT NULL,
   cin VARCHAR(100) NOT NULL UNIQUE,
   role ENUM('FEDERATION', 'PRESIDENT', 'MEMBRE') NOT NULL,
   club_id BIGINT,
@@ -111,3 +111,6 @@ CREATE TABLE Activite (
 -- =================================================================
 -- Fin du script
 -- =================================================================
+INSERT INTO Utilisateur (nom, prenom, email, motDePasse, cin, role) 
+VALUES ('Admin', 'User', 'admin@federation.com', 'password', 'A123456', 'FEDERATION');
+SELECT * FROM chess_club_db.Utilisateur WHERE email = 'admin@federation.com';
