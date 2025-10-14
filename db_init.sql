@@ -114,3 +114,9 @@ CREATE TABLE Activite (
 INSERT INTO Utilisateur (nom, prenom, email, motDePasse, cin, role) 
 VALUES ('Admin', 'User', 'admin@federation.com', 'password', 'A123456', 'FEDERATION');
 SELECT * FROM chess_club_db.Utilisateur WHERE email = 'admin@federation.com';
+
+DELETE FROM Utilisateur WHERE email = 'president@club.com';
+
+UPDATE Utilisateur 
+SET role = 'PRESIDENT', club_id = 1 
+WHERE email = 'president@club.com';

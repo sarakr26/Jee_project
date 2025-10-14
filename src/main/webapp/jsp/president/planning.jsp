@@ -8,6 +8,9 @@
 <body>
     <div class="container">
         <h1>Planning des Activités</h1>
+
+        <a href="${pageContext.request.contextPath}/president/dashboard" class="btn btn-secondary mb-3">Retour au Tableau de Bord</a>
+        <br>
         <button class="btn btn-primary">Ajouter une nouvelle activité</button>
         <br><br>
         <table class="table">

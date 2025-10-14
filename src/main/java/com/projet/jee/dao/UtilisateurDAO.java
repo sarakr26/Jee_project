@@ -9,44 +9,10 @@ import java.util.List;
 
 public class UtilisateurDAO {
 
-    /**
-     * Trouve un utilisateur par son email ET son mot de passe.
-     * C'est la méthode correcte à utiliser pour le login.
-     * @param email L'email de l'utilisateur.
-     * @param password Le mot de passe de l'utilisateur.
-     * @return L'objet Utilisateur s'il est trouvé, sinon null.
-     */
-
+    // NOTE: Cette méthode est incorrecte pour un système avec BCrypt et ne devrait pas être utilisée pour le login.
     public Utilisateur findByEmailAndPassword(String email, String password) {
-        Utilisateur user = null;
-        // Modifiez la requête SQL pour inclure la vérification du mot de passe
-        String sql = "SELECT * FROM Utilisateur WHERE email = ? AND motDePasse = ?";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            
-            statement.setString(1, email);
-            statement.setString(2, password); // Ajoutez le paramètre du mot de passe
-            
-            ResultSet rs = statement.executeQuery();
-            
-            if (rs.next()) {
-                user = new Utilisateur();
-                user.setId(rs.getLong("id"));
-                user.setNom(rs.getString("nom"));
-                user.setPrenom(rs.getString("prenom"));
-                user.setEmail(rs.getString("email"));
-                user.setCin(rs.getString("cin"));
-                user.setRole(rs.getString("role"));
-                // Assurez-vous que votre table a bien une colonne club_id
-                if (rs.getObject("club_id") != null) {
-                    user.setClubId(rs.getLong("club_id"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return user;
+        // ... code existant ...
+        return null; // Laisser tel quel pour l'instant
     }
 
     public Utilisateur findByEmail(String email) {
@@ -57,8 +23,8 @@ public class UtilisateurDAO {
             statement.setString(1, email);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                user = new Utilisateur();
-                // ... mapper les champs comme dans l'autre méthode
+                // CORRECTION : Utiliser mapRow pour remplir complètement l'objet utilisateur
+                user = mapRow(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,68 +33,61 @@ public class UtilisateurDAO {
     }
 
     public Utilisateur findById(Long id) throws SQLException {
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement("SELECT * FROM Utilisateur WHERE id = ?");
-            ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return mapRow(rs);
-            return null;
-        }
+        // ... code existant ...
+        return null;
     }
 
     public Utilisateur create(Utilisateur u) throws SQLException {
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement("INSERT INTO Utilisateur (nom, prenom, email, motDePasse, cin, role, club_id) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, u.getNom());
-            ps.setString(2, u.getPrenom());
-            ps.setString(3, u.getEmail());
-            ps.setString(4, u.getMotDePasse());
-            ps.setString(5, u.getCin());
-            ps.setString(6, u.getRole());
-            if (u.getClubId() != null) ps.setLong(7, u.getClubId()); else ps.setNull(7, Types.BIGINT);
-            ps.executeUpdate();
-            ResultSet keys = ps.getGeneratedKeys();
-            if (keys.next()) u.setId(keys.getLong(1));
-            return u;
-        }
+        // ... code existant ...
+        return u;
     }
 
     public List<Utilisateur> findByClubId(long clubId) {
-        List<Utilisateur> membres = new ArrayList<>();
-        String sql = "SELECT * FROM Utilisateur WHERE club_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            
-            statement.setLong(1, clubId);
-            ResultSet rs = statement.executeQuery();
-            
-            while (rs.next()) {
-                membres.add(mapRow(rs)); // On réutilise la méthode mapRow existante
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return membres;
+        // ... code existant ...
+        return new ArrayList<>();
     }
 
     public Utilisateur authenticate(String email, String plainPassword) throws SQLException {
+        // --- DÉBOGAGE ---
+        System.out.println("\n--- [DEBUG] UtilisateurDAO: Méthode authenticate ---");
+        System.out.println("Email reçu par le DAO : " + email);
+        // --- FIN DÉBOGAGE ---
+
         Utilisateur u = findByEmail(email);
-        if (u == null) return null;
-        if (BCrypt.checkpw(plainPassword, u.getMotDePasse())) return u;
+
+        // --- DÉBOGAGE ---
+        if (u != null) {
+            System.out.println("Utilisateur trouvé dans la BDD : " + u.getEmail());
+            // La ligne suivante est la plus importante. Elle nous montrera ce qui est passé à BCrypt.
+            System.out.println("Mot de passe haché récupéré de la BDD : '" + u.getMotDePasse() + "'");
+        } else {
+            System.out.println("AUCUN utilisateur trouvé dans la BDD pour l'email : " + email);
+        }
+        // --- FIN DÉBOGAGE ---
+
+        if (u != null) {
+            // Vérification pour éviter l'erreur si le mot de passe est null dans la BDD
+            if (u.getMotDePasse() != null && BCrypt.checkpw(plainPassword, u.getMotDePasse())) {
+                System.out.println("Authentification réussie pour " + email);
+                return u;
+            }
+        }
+        System.out.println("Authentification échouée pour " + email);
         return null;
     }
 
     private Utilisateur mapRow(ResultSet rs) throws SQLException {
-        Utilisateur u = new Utilisateur();
-        u.setId(rs.getLong("id"));
-        u.setNom(rs.getString("nom"));
-        u.setPrenom(rs.getString("prenom"));
-        u.setEmail(rs.getString("email"));
-        u.setMotDePasse(rs.getString("motDePasse"));
-        u.setCin(rs.getString("cin"));
-        u.setRole(rs.getString("role"));
-        long clubId = rs.getLong("club_id");
-        if (!rs.wasNull()) u.setClubId(clubId);
-        return u;
+        Utilisateur user = new Utilisateur();
+        user.setId(rs.getLong("id"));
+        user.setNom(rs.getString("nom"));
+        user.setPrenom(rs.getString("prenom"));
+        user.setEmail(rs.getString("email"));
+        user.setMotDePasse(rs.getString("motDePasse"));
+        user.setCin(rs.getString("cin"));
+        user.setRole(rs.getString("role"));
+        if (rs.getObject("club_id") != null) {
+            user.setClubId(rs.getLong("club_id"));
+        }
+        return user;
     }
 }

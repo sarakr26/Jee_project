@@ -16,7 +16,6 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Use the site's index as the login page
         req.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 
@@ -26,15 +25,27 @@ public class LoginServlet extends HttpServlet {
             req.setCharacterEncoding("UTF-8");
             String email = req.getParameter("email");
             String pwd = req.getParameter("motDePasse");
+
             Utilisateur u = dao.authenticate(email, pwd);
+
             if (u == null) {
                 req.setAttribute("error", "Identifiants invalides.");
                 req.getRequestDispatcher("/index.jsp").forward(req, resp);
                 return;
             }
-            // store user in session
+
+            // On stocke l'utilisateur en session avec le nom "currentUser"
             req.getSession().setAttribute("currentUser", u);
-            resp.sendRedirect(req.getContextPath() + "/jsp/auth/profile.jsp");
+
+            // Redirection en fonction du rôle
+            String role = u.getRole();
+            if ("PRESIDENT".equals(role)) {
+                resp.sendRedirect(req.getContextPath() + "/president/dashboard");
+            } else if ("FEDERATION".equals(role)) {
+                resp.sendRedirect(req.getContextPath() + "/home");
+            } else { // Pour les MEMBREs et autres
+                resp.sendRedirect(req.getContextPath() + "/jsp/auth/profile.jsp");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("error", "Erreur lors de la connexion: " + e.getMessage());
