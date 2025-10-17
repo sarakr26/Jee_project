@@ -120,3 +120,14 @@ DELETE FROM Utilisateur WHERE email = 'president@club.com';
 UPDATE Utilisateur 
 SET role = 'PRESIDENT', club_id = 1 
 WHERE email = 'president@club.com';
+
+-- Remplacez 'federation@email.com' par l'email que vous avez enregistré
+UPDATE Utilisateur SET role = 'FEDERATION' WHERE email = 'federation@email.com';
+
+UPDATE Utilisateur 
+SET role = 'FEDERATION' 
+WHERE email = 'federation@email.com';
+
+UPDATE Utilisateur 
+SET role = 'PRESIDENT', club_id = 2 
+WHERE email = 'president.dupont@club.com';
