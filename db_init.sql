@@ -131,3 +131,127 @@ WHERE email = 'federation@email.com';
 UPDATE Utilisateur 
 SET role = 'PRESIDENT', club_id = 2 
 WHERE email = 'president.dupont@club.com';
+
+-- ===========================
+-- Indexes (performance)
+-- ===========================
+-- DemandeIntegration FKs
+CREATE INDEX idx_demande_membre ON DemandeIntegration (membre_id);
+CREATE INDEX idx_demande_club ON DemandeIntegration (club_id);
+
+-- Evenement FK
+CREATE INDEX idx_evenement_federation ON Evenement (federation_id);
+
+-- Participation FKs
+CREATE INDEX idx_participation_membre ON Participation (membre_id);
+CREATE INDEX idx_participation_evenement ON Participation (evenement_id);
+
+-- Planning unique per club already enforced; add explicit index too
+CREATE INDEX idx_planning_club ON Planning (club_id);
+
+-- Activite FK
+CREATE INDEX idx_activite_planning ON Activite (planning_id);
+
+-- Common lookups on Utilisateur
+CREATE INDEX idx_user_role ON Utilisateur (role);
+CREATE INDEX idx_user_club ON Utilisateur (club_id);
+
+-- ===========================
+-- Views (reporting)
+-- ===========================
+CREATE OR REPLACE VIEW v_club_members AS
+SELECT u.id AS user_id, u.nom, u.prenom, u.email, u.role, u.club_id
+FROM Utilisateur u
+WHERE u.role = 'MEMBRE' AND u.club_id IS NOT NULL;
+
+CREATE OR REPLACE VIEW v_pending_requests AS
+SELECT d.id AS demande_id, d.dateDemande, d.statut, d.membre_id, u.nom, u.prenom, u.email, d.club_id
+FROM DemandeIntegration d
+JOIN Utilisateur u ON u.id = d.membre_id
+WHERE d.statut = 'EN_ATTENTE';
+
+CREATE OR REPLACE VIEW v_upcoming_activities AS
+SELECT c.id AS club_id, c.nom AS club_nom, a.id AS activite_id, a.titre, a.type, a.dateDebut, a.dateFin
+FROM Club c
+JOIN Planning p ON p.club_id = c.id
+JOIN Activite a ON a.planning_id = p.id
+WHERE a.dateFin >= NOW()
+ORDER BY a.dateDebut ASC;
+
+-- ===========================
+-- Procedures (business flows)
+-- ===========================
+DELIMITER $$
+
+-- Accept a join request: marks demande ACCEPTEE and sets user's club_id.
+CREATE PROCEDURE sp_accept_demande(IN p_demande_id BIGINT)
+BEGIN
+  DECLARE v_membre_id BIGINT;
+  DECLARE v_club_id BIGINT;
+
+  SELECT membre_id, club_id INTO v_membre_id, v_club_id
+  FROM DemandeIntegration
+  WHERE id = p_demande_id AND statut = 'EN_ATTENTE'
+  FOR UPDATE;
+
+  -- Update demande status
+  UPDATE DemandeIntegration
+  SET statut = 'ACCEPTEE'
+  WHERE id = p_demande_id AND statut = 'EN_ATTENTE';
+
+  -- Attach user to club only if member role
+  UPDATE Utilisateur
+  SET club_id = v_club_id
+  WHERE id = v_membre_id AND role = 'MEMBRE';
+END$$
+
+-- Refuse a join request
+CREATE PROCEDURE sp_refuse_demande(IN p_demande_id BIGINT)
+BEGIN
+  UPDATE DemandeIntegration
+  SET statut = 'REFUSEE'
+  WHERE id = p_demande_id AND statut = 'EN_ATTENTE';
+END$$
+
+-- Remove a member from a club (kick)
+CREATE PROCEDURE sp_remove_member(IN p_user_id BIGINT, IN p_club_id BIGINT)
+BEGIN
+  UPDATE Utilisateur
+  SET club_id = NULL
+  WHERE id = p_user_id AND role = 'MEMBRE' AND club_id = p_club_id;
+END$$
+
+-- Ensure a Planning exists for a club; if not, create it.
+-- OUT param returns the planning id.
+CREATE PROCEDURE sp_ensure_planning(IN p_club_id BIGINT, OUT p_planning_id BIGINT)
+BEGIN
+  SELECT id INTO p_planning_id FROM Planning WHERE club_id = p_club_id LIMIT 1;
+
+  IF p_planning_id IS NULL THEN
+    INSERT INTO Planning (club_id) VALUES (p_club_id);
+    SET p_planning_id = LAST_INSERT_ID();
+  END IF;
+END$$
+
+DELIMITER ;
+
+-- ===========================
+-- Seed data (optional for tests)
+-- ===========================
+-- Ensure at least one active club exists
+INSERT INTO Club (nom, statut) 
+SELECT 'Club Alpha', 'ACTIF'
+WHERE NOT EXISTS (SELECT 1 FROM Club WHERE nom = 'Club Alpha');
+
+-- Ensure a planning for Club Alpha
+CALL sp_ensure_planning(
+  (SELECT id FROM Club WHERE nom = 'Club Alpha' LIMIT 1),
+  @p_planning_id
+);
+
+-- Add a sample upcoming activity if none exists
+INSERT INTO Activite (titre, type, dateDebut, dateFin, planning_id)
+SELECT 'Entraînement hebdo', 'TRAINING', NOW() + INTERVAL 2 DAY, NOW() + INTERVAL 2 DAY + INTERVAL 2 HOUR, @p_planning_id
+WHERE NOT EXISTS (
+  SELECT 1 FROM Activite WHERE planning_id = @p_planning_id AND dateDebut > NOW()
+);

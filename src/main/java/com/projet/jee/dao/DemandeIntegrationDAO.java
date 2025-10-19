@@ -32,5 +32,53 @@ public class DemandeIntegrationDAO {
         return demandes;
     }
     
-    // Vous ajouterez ici les méthodes pour approuver/rejeter plus tard
+    
+    public List<DemandeIntegration> findPendingByClub(long clubId) throws SQLException {
+        String sql = "SELECT id, dateDemande, statut, membre_id, club_id FROM DemandeIntegration WHERE club_id = ? AND statut = 'EN_ATTENTE' ORDER BY dateDemande DESC";
+        List<DemandeIntegration> demandes = new ArrayList<>();
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, clubId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DemandeIntegration d = new DemandeIntegration();
+                    d.setId(rs.getLong("id"));
+                    d.setDateDemande(rs.getDate("dateDemande"));
+                    d.setStatut(rs.getString("statut"));
+                    d.setMembreId(rs.getLong("membre_id"));
+                    d.setClubId(rs.getLong("club_id"));
+                    demandes.add(d);
+                }
+            }
+        }
+        return demandes;
+    }
+
+    /**
+     * Accept a join request using stored procedure
+     */
+    public void acceptDemande(long demandeId) throws SQLException {
+        String callProc = "{CALL sp_accept_demande(?)}";
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(callProc)) {
+            
+            stmt.setLong(1, demandeId);
+            stmt.execute();
+        }
+    }
+
+    /**
+     * Refuse a join request using stored procedure
+     */
+    public void refuseDemande(long demandeId) throws SQLException {
+        String callProc = "{CALL sp_refuse_demande(?)}";
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(callProc)) {
+            
+            stmt.setLong(1, demandeId);
+            stmt.execute();
+        }
+    }
 }

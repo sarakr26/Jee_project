@@ -99,6 +99,76 @@ public class UtilisateurDAO {
         return membres;
     }
 
+    /**
+     * List all members of a specific club
+     */
+    public List<Utilisateur> listMembersByClub(long clubId) throws SQLException {
+        String sql = "SELECT id, nom, prenom, email, motDePasse, cin, role, club_id FROM Utilisateur WHERE role = 'MEMBRE' AND club_id = ? ORDER BY nom, prenom";
+        List<Utilisateur> members = new ArrayList<>();
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, clubId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    members.add(mapRow(rs));
+                }
+            }
+        }
+        return members;
+    }
+
+    /**
+     * Remove a member from a club using stored procedure
+     */
+    public void removeMember(long userId, long clubId) throws SQLException {
+        String callProc = "{CALL sp_remove_member(?, ?)}";
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement stmt = conn.prepareCall(callProc)) {
+            
+            stmt.setLong(1, userId);
+            stmt.setLong(2, clubId);
+            stmt.execute();
+        }
+    }
+
+    /**
+     * Count members in a club
+     */
+    public long countMembers(long clubId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Utilisateur WHERE role = 'MEMBRE' AND club_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, clubId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Count pending requests for a club
+     */
+    public long countPendingRequests(long clubId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM DemandeIntegration WHERE club_id = ? AND statut = 'EN_ATTENTE'";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, clubId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        }
+        return 0;
+    }
+
     private Utilisateur mapRow(ResultSet rs) throws SQLException {
         Utilisateur user = new Utilisateur();
         user.setId(rs.getLong("id"));
