@@ -10,8 +10,10 @@ public class ClubDAO {
 
     public List<Club> findAll() throws SQLException {
         List<Club> list = new ArrayList<>();
-        String sql = "SELECT id, nom, adresse, telephone, email, description, federation_id FROM Club";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        String sql = "SELECT id, nom, logo, description, statut, president_id FROM Club";
+        try (Connection c = DBConnection.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Club club = mapRow(rs);
                 list.add(club);
@@ -21,41 +23,50 @@ public class ClubDAO {
     }
 
     public Club findById(Long id) throws SQLException {
-        String sql = "SELECT id, nom, adresse, telephone, email, description, federation_id FROM Club WHERE id = ?";
+        String sql = "SELECT id, nom, logo, description, statut, president_id FROM Club WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
+                if (rs.next())
+                    return mapRow(rs);
             }
         }
         return null;
     }
 
     public Club create(Club club) throws SQLException {
-        String sql = "INSERT INTO Club (nom, adresse, telephone, email, description, federation_id) VALUES (?,?,?,?,?,?)";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO Club (nom, logo, description, statut, president_id) VALUES (?,?,?,?,?)";
+        try (Connection c = DBConnection.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, club.getNom());
-            ps.setString(2, club.getAdresse());
-            ps.setString(3, club.getTelephone());
-            ps.setString(4, club.getEmail());
-            ps.setString(5, club.getDescription());
-            if (club.getFederationId() == null) ps.setNull(6, Types.BIGINT); else ps.setLong(6, club.getFederationId());
+            ps.setString(2, club.getLogo());
+            ps.setString(3, club.getDescription());
+            ps.setString(4, club.getStatut() != null ? club.getStatut() : "EN_ATTENTE");
+            if (club.getPresidentId() == null)
+                ps.setNull(5, Types.BIGINT);
+            else
+                ps.setLong(5, club.getPresidentId());
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) { if (keys.next()) club.setId(keys.getLong(1)); }
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next())
+                    club.setId(keys.getLong(1));
+            }
         }
         return club;
     }
 
     public boolean update(Club club) throws SQLException {
-        String sql = "UPDATE Club SET nom = ?, adresse = ?, telephone = ?, email = ?, description = ?, federation_id = ? WHERE id = ?";
+        String sql = "UPDATE Club SET nom = ?, logo = ?, description = ?, statut = ?, president_id = ? WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, club.getNom());
-            ps.setString(2, club.getAdresse());
-            ps.setString(3, club.getTelephone());
-            ps.setString(4, club.getEmail());
-            ps.setString(5, club.getDescription());
-            if (club.getFederationId() == null) ps.setNull(6, Types.BIGINT); else ps.setLong(6, club.getFederationId());
-            ps.setLong(7, club.getId());
+            ps.setString(2, club.getLogo());
+            ps.setString(3, club.getDescription());
+            ps.setString(4, club.getStatut());
+            if (club.getPresidentId() == null)
+                ps.setNull(5, Types.BIGINT);
+            else
+                ps.setLong(5, club.getPresidentId());
+            ps.setLong(6, club.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -72,12 +83,12 @@ public class ClubDAO {
         Club club = new Club();
         club.setId(rs.getLong("id"));
         club.setNom(rs.getString("nom"));
-        club.setAdresse(rs.getString("adresse"));
-        club.setTelephone(rs.getString("telephone"));
-        club.setEmail(rs.getString("email"));
+        club.setLogo(rs.getString("logo"));
         club.setDescription(rs.getString("description"));
-        long fid = rs.getLong("federation_id");
-        if (!rs.wasNull()) club.setFederationId(fid);
+        club.setStatut(rs.getString("statut"));
+        long pid = rs.getLong("president_id");
+        if (!rs.wasNull())
+            club.setPresidentId(pid);
         return club;
     }
 }

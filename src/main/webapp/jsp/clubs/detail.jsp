@@ -308,51 +308,65 @@
                             <div class="info-grid">
                                 <div class="info-item">
                                     <div class="info-icon">
-                                        <i class="fas fa-map-marker-alt"></i>
+                                        <i class="fas fa-image"></i>
                                     </div>
                                     <div class="info-content">
-                                        <div class="info-label">Adresse</div>
-                                        <div class="info-value">${club.adresse}</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="fas fa-phone"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <div class="info-label">Téléphone</div>
-                                        <div class="info-value">${club.telephone}</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <div class="info-label">Email</div>
+                                        <div class="info-label">Logo</div>
                                         <div class="info-value">
-                                            <a href="mailto:${club.email}" style="color: #3498db; text-decoration: none;">
-                                                ${club.email}
-                                            </a>
+                                            <c:choose>
+                                                <c:when test="${not empty club.logo}">
+                                                    <img src="${club.logo}" alt="Logo du club" style="max-width: 100px; max-height: 100px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span style="color: #7f8c8d; font-style: italic;">Aucun logo</span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="info-item">
                                     <div class="info-icon">
-                                        <i class="fas fa-flag"></i>
+                                        <i class="fas fa-info-circle"></i>
                                     </div>
                                     <div class="info-content">
-                                        <div class="info-label">Fédération</div>
+                                        <div class="info-label">Statut</div>
                                         <div class="info-value">
                                             <c:choose>
-                                                <c:when test="${not empty federationMap[club.federationId]}">
-                                                    <c:out value="${federationMap[club.federationId]}"/>
+                                                <c:when test="${club.statut == 'ACTIF'}">
+                                                    <span style="color: #27ae60; font-weight: bold; font-size: 1.1rem;">✓ Actif</span>
+                                                </c:when>
+                                                <c:when test="${club.statut == 'EN_ATTENTE'}">
+                                                    <span style="color: #f39c12; font-weight: bold;">⏳ En Attente</span>
+                                                </c:when>
+                                                <c:when test="${club.statut == 'SUSPENDU'}">
+                                                    <span style="color: #e74c3c; font-weight: bold;">⚠ Suspendu</span>
+                                                </c:when>
+                                                <c:when test="${club.statut == 'REFUSE'}">
+                                                    <span style="color: #c0392b; font-weight: bold;">✗ Refusé</span>
+                                                </c:when>
+                                                <c:when test="${club.statut == 'ARCHIVE'}">
+                                                    <span style="color: #95a5a6; font-weight: bold;">🗄 Archivé</span>
+                                                </c:when>
+                                                <c:otherwise>${club.statut}</c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Président</div>
+                                        <div class="info-value">
+                                            <c:choose>
+                                                <c:when test="${not empty club.presidentId}">
+                                                    ID: ${club.presidentId}
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span style="color: #7f8c8d; font-style: italic;">Aucune fédération</span>
+                                                    <span style="color: #7f8c8d; font-style: italic;">Aucun président assigné</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </div>

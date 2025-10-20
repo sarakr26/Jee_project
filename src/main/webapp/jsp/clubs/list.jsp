@@ -259,10 +259,9 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Nom</th>
-                                        <th>Adresse</th>
-                                        <th>Téléphone</th>
-                                        <th>Email</th>
-                                        <th>Fédération</th>
+                                        <th>Logo</th>
+                                        <th>Statut</th>
+                                        <th>Président ID</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -271,10 +270,25 @@
                                         <tr>
                                             <td>${c.id}</td>
                                             <td><strong>${c.nom}</strong></td>
-                                            <td>${c.adresse}</td>
-                                            <td>${c.telephone}</td>
-                                            <td>${c.email}</td>
-                                            <td><c:out value="${federationMap[c.federationId]}" default="-"/></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty c.logo}">
+                                                        <img src="${c.logo}" alt="Logo" style="max-width: 40px; max-height: 40px; border-radius: 5px;">
+                                                    </c:when>
+                                                    <c:otherwise>-</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${c.statut == 'ACTIF'}"><span style="color: #27ae60; font-weight: bold;">✓ Actif</span></c:when>
+                                                    <c:when test="${c.statut == 'EN_ATTENTE'}"><span style="color: #f39c12;">⏳ En Attente</span></c:when>
+                                                    <c:when test="${c.statut == 'SUSPENDU'}"><span style="color: #e74c3c;">⚠ Suspendu</span></c:when>
+                                                    <c:when test="${c.statut == 'REFUSE'}"><span style="color: #c0392b;">✗ Refusé</span></c:when>
+                                                    <c:when test="${c.statut == 'ARCHIVE'}"><span style="color: #95a5a6;">🗄 Archivé</span></c:when>
+                                                    <c:otherwise>${c.statut}</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td><c:out value="${c.presidentId}" default="-"/></td>
                                             <td>
                                                 <div class="action-links">
                                                     <a href="${pageContext.request.contextPath}/clubs?id=${c.id}" class="action-link details">

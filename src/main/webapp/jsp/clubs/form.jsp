@@ -341,26 +341,23 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Adresse</label>
+                            <label class="form-label">Logo (URL)</label>
                             <div class="form-input-group">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <input type="text" name="adresse" value="${club.adresse}" class="form-input" placeholder="Adresse complète du club">
+                                <i class="fas fa-image"></i>
+                                <input type="text" name="logo" value="${club.logo}" class="form-input" placeholder="URL du logo du club">
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Téléphone</label>
-                            <div class="form-input-group">
-                                <i class="fas fa-phone"></i>
-                                <input type="tel" name="telephone" value="${club.telephone}" class="form-input" placeholder="Numéro de téléphone">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <div class="form-input-group">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" name="email" value="${club.email}" class="form-input" placeholder="Adresse email du club">
+                            <label class="form-label">Statut</label>
+                            <div class="form-select-group">
+                                <select name="statut" class="form-select" required>
+                                    <option value="EN_ATTENTE" <c:if test="${club.statut == 'EN_ATTENTE'}">selected</c:if>>En Attente</option>
+                                    <option value="ACTIF" <c:if test="${club.statut == 'ACTIF'}">selected</c:if>>Actif</option>
+                                    <option value="REFUSE" <c:if test="${club.statut == 'REFUSE'}">selected</c:if>>Refusé</option>
+                                    <option value="SUSPENDU" <c:if test="${club.statut == 'SUSPENDU'}">selected</c:if>>Suspendu</option>
+                                    <option value="ARCHIVE" <c:if test="${club.statut == 'ARCHIVE'}">selected</c:if>>Archivé</option>
+                                </select>
                             </div>
                         </div>
                         
@@ -372,14 +369,10 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Fédération</label>
-                            <div class="form-select-group">
-                                <select name="federationId" class="form-select">
-                                    <option value="">-- Aucune fédération --</option>
-                                    <c:forEach var="f" items="${federations}">
-                                        <option value="${f.id}" <c:if test="${club.federationId == f.id}">selected</c:if>>${f.nom}</option>
-                                    </c:forEach>
-                                </select>
+                            <label class="form-label">Président (ID Utilisateur)</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-user-tie"></i>
+                                <input type="number" name="presidentId" value="${club.presidentId}" class="form-input" placeholder="ID du président (optionnel)">
                             </div>
                         </div>
                         

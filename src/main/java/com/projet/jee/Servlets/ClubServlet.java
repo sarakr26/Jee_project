@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ClubServlet", urlPatterns = {"/clubs"})
+@WebServlet(name = "ClubServlet", urlPatterns = { "/clubs" })
 public class ClubServlet extends HttpServlet {
     private ClubDAO dao = new ClubDAO();
     private FederationDAO federationDAO = new FederationDAO();
@@ -40,7 +40,8 @@ public class ClubServlet extends HttpServlet {
             }
             if ("delete".equals(action)) {
                 String id = req.getParameter("id");
-                if (id != null) dao.delete(Long.valueOf(id));
+                if (id != null)
+                    dao.delete(Long.valueOf(id));
                 req.getSession().setAttribute("message", "Club supprimé.");
                 resp.sendRedirect(req.getContextPath() + "/clubs");
                 return;
@@ -57,13 +58,24 @@ public class ClubServlet extends HttpServlet {
             // ensure there are some federations to choose from (dev convenience)
             List<Federation> federations = federationDAO.findAll();
             if (federations.isEmpty()) {
-                federationDAO.create(new Federation(){{ setNom("Fédération A"); setPays("France"); }});
-                federationDAO.create(new Federation(){{ setNom("Fédération B"); setPays("Maroc"); }});
+                federationDAO.create(new Federation() {
+                    {
+                        setNom("Fédération A");
+                        setPays("France");
+                    }
+                });
+                federationDAO.create(new Federation() {
+                    {
+                        setNom("Fédération B");
+                        setPays("Maroc");
+                    }
+                });
                 federations = federationDAO.findAll();
             }
             // build a map id->name for easy lookup in JSP
-            java.util.Map<String,String> fMap = new java.util.HashMap<>();
-            for (Federation f : federations) fMap.put(String.valueOf(f.getId()), f.getNom());
+            java.util.Map<String, String> fMap = new java.util.HashMap<>();
+            for (Federation f : federations)
+                fMap.put(String.valueOf(f.getId()), f.getNom());
             req.setAttribute("federationMap", fMap);
             req.setAttribute("clubs", list);
             req.setAttribute("federations", federations);
@@ -83,23 +95,28 @@ public class ClubServlet extends HttpServlet {
             if ("save".equals(action)) {
                 String id = req.getParameter("id");
                 Club c = new Club();
-                if (id != null && !id.isEmpty()) c.setId(Long.valueOf(id));
+                if (id != null && !id.isEmpty())
+                    c.setId(Long.valueOf(id));
                 c.setNom(req.getParameter("nom"));
-                c.setAdresse(req.getParameter("adresse"));
-                c.setTelephone(req.getParameter("telephone"));
-                c.setEmail(req.getParameter("email"));
+                c.setLogo(req.getParameter("logo"));
                 c.setDescription(req.getParameter("description"));
-                String fid = req.getParameter("federationId");
-                if (fid != null && !fid.isEmpty()) c.setFederationId(Long.valueOf(fid));
+                c.setStatut(req.getParameter("statut"));
+                String pid = req.getParameter("presidentId");
+                if (pid != null && !pid.isEmpty())
+                    c.setPresidentId(Long.valueOf(pid));
 
-                if (c.getId() == null) dao.create(c); else dao.update(c);
+                if (c.getId() == null)
+                    dao.create(c);
+                else
+                    dao.update(c);
                 req.getSession().setAttribute("message", "Club enregistré.");
                 resp.sendRedirect(req.getContextPath() + "/clubs");
                 return;
             }
             if ("delete".equals(action)) {
                 String id = req.getParameter("id");
-                if (id != null && !id.isEmpty()) dao.delete(Long.valueOf(id));
+                if (id != null && !id.isEmpty())
+                    dao.delete(Long.valueOf(id));
                 req.getSession().setAttribute("message", "Club supprimé.");
                 resp.sendRedirect(req.getContextPath() + "/clubs");
                 return;
