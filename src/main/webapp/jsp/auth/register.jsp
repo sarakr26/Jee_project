@@ -41,10 +41,11 @@
                     <select name="role" class="form-select">
                         <option value="MEMBRE">MEMBRE</option>
                         <option value="PRESIDENT">PRESIDENT</option>
-                        <option value="FEDERATION">FEDERATION</option>
+                        
                     </select>
-                    <div class="d-grid">
-                        <button class="btn btn-primary" type="submit">S'inscrire</button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary flex-fill" type="submit">S'inscrire</button>
+                        <a href="${pageContext.request.contextPath}/login" class="btn btn-primary flex-fill">Se connecter</a>
                     </div>
                 </form>
             </div>
