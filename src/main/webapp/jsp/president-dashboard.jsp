@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.projet.jee.model.Club" %>
 <%@ page import="com.projet.jee.model.Evenement" %>
 <%@ page import="com.projet.jee.model.DemandeCreationClub" %>
 <%@ page import="com.projet.jee.model.Utilisateur" %>
@@ -11,6 +12,9 @@
     }
     List<Evenement> evenements = (List<Evenement>) request.getAttribute("evenements");
     List<DemandeCreationClub> demandes = (List<DemandeCreationClub>) request.getAttribute("demandes");
+    Club club = (Club) request.getAttribute("club");
+    Integer memberCount = (Integer) request.getAttribute("memberCount");
+    if (memberCount == null) memberCount = 0;
 %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -387,6 +391,96 @@
             color: #666;
             font-size: 1rem;
         }
+
+        .club-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .club-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .club-logo-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .club-logo-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .club-info h2 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+
+        .club-info p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .club-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .club-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-white {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-white:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -400,10 +494,12 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn btn-primary" onclick="openModal()">
-                    <i class="fas fa-plus-circle"></i>
-                    Créer un Club
-                </button>
+                <% if (club == null) { %>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <i class="fas fa-plus-circle"></i>
+                        Créer un Club
+                    </button>
+                <% } %>
                 <a href="<%= request.getContextPath() %>/jsp/auth/profile.jsp" class="btn btn-secondary">
                     <i class="fas fa-user"></i>
                     Mon Profil
@@ -431,6 +527,63 @@
                     <%= session.getAttribute("errorMessage") %>
                 </div>
                 <% session.removeAttribute("errorMessage"); %>
+            <% } %>
+
+            <!-- Section Mon Club -->
+            <% if (club != null) { %>
+                <div class="club-card">
+                    <div class="club-header">
+                        <% if (club.getLogo() != null && !club.getLogo().isEmpty()) { %>
+                            <div class="club-logo-large">
+                                <img src="<%= request.getContextPath() %>/uploads/logos/<%= club.getLogo() %>" 
+                                     alt="Logo <%= club.getNom() %>"
+                                     onerror="this.style.display='none'">
+                            </div>
+                        <% } else { %>
+                            <div class="club-logo-large">
+                                <i class="fas fa-chess-knight" style="font-size: 3rem; color: #667eea;"></i>
+                            </div>
+                        <% } %>
+                        <div class="club-info">
+                            <h2><i class="fas fa-crown"></i> <%= club.getNom() %></h2>
+                            <p><%= club.getDescription() != null && !club.getDescription().isEmpty() ? club.getDescription() : "Votre club d'échecs" %></p>
+                        </div>
+                    </div>
+                    
+                    <div class="club-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <div class="stat-value"><%= memberCount %></div>
+                            <div class="stat-label">Membres</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-trophy"></i>
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Tournois</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-calendar-check"></i>
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Événements</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stat-value"><%= club.getStatut() %></div>
+                            <div class="stat-label">Statut</div>
+                        </div>
+                    </div>
+
+                    <div class="club-actions">
+                        <a href="<%= request.getContextPath() %>/president/gerer-membres" class="btn btn-white">
+                            <i class="fas fa-users"></i>
+                            Gérer les Membres
+                        </a>
+                        <button class="btn btn-white" onclick="alert('Fonctionnalité en cours de développement')">
+                            <i class="fas fa-cog"></i>
+                            Paramètres du Club
+                        </button>
+                    </div>
+                </div>
             <% } %>
 
             <!-- Section Événements -->

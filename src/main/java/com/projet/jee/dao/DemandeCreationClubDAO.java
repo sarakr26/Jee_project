@@ -116,6 +116,35 @@ public class DemandeCreationClubDAO {
     }
 
     /**
+     * Récupère une demande par son ID
+     */
+    public DemandeCreationClub findById(Long id) throws SQLException {
+        String sql = "SELECT id, nomClub, description, logo, dateDemande, statut, president_id " +
+                "FROM DemandeCreationClub WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    DemandeCreationClub demande = new DemandeCreationClub();
+                    demande.setId(rs.getLong("id"));
+                    demande.setNomClub(rs.getString("nomClub"));
+                    demande.setDescription(rs.getString("description"));
+                    demande.setLogo(rs.getString("logo"));
+                    demande.setDateDemande(rs.getDate("dateDemande"));
+                    demande.setStatut(rs.getString("statut"));
+                    demande.setPresidentId(rs.getLong("president_id"));
+                    return demande;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Récupère toutes les demandes
      */
     public List<DemandeCreationClub> findAll() throws SQLException {
@@ -152,7 +181,7 @@ public class DemandeCreationClubDAO {
      * Valide une demande de création de club
      */
     public boolean validerDemande(Long demandeId) throws SQLException {
-        String sql = "UPDATE DemandeCreationClub SET statut = 'APPROUVE' WHERE id = ?";
+        String sql = "UPDATE DemandeCreationClub SET statut = 'ACCEPTEE' WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -166,7 +195,7 @@ public class DemandeCreationClubDAO {
      * Refuse une demande de création de club
      */
     public boolean refuserDemande(Long demandeId) throws SQLException {
-        String sql = "UPDATE DemandeCreationClub SET statut = 'REFUSE' WHERE id = ?";
+        String sql = "UPDATE DemandeCreationClub SET statut = 'REFUSEE' WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {

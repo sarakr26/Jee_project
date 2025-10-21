@@ -23,14 +23,14 @@ public class DemandeIntegrationDAO {
         }
 
         String sql = "INSERT INTO DemandeIntegration (dateDemande, statut, membre_id, club_id) VALUES (?, 'EN_ATTENTE', ?, ?)";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setDate(1, new Date(System.currentTimeMillis()));
             stmt.setLong(2, membreId);
             stmt.setLong(3, clubId);
-            
+
             int rows = stmt.executeUpdate();
             return rows > 0;
         }
@@ -41,13 +41,13 @@ public class DemandeIntegrationDAO {
      */
     public boolean hasPendingDemande(Long membreId, Long clubId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM DemandeIntegration WHERE membre_id = ? AND club_id = ? AND statut = 'EN_ATTENTE'";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, membreId);
             stmt.setLong(2, clubId);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -62,12 +62,12 @@ public class DemandeIntegrationDAO {
      */
     public DemandeIntegration getDemandeById(Long id) throws SQLException {
         String sql = "SELECT id, dateDemande, statut, membre_id, club_id FROM DemandeIntegration WHERE id = ?";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, id);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     DemandeIntegration demande = new DemandeIntegration();
@@ -89,17 +89,17 @@ public class DemandeIntegrationDAO {
     public java.util.List<DemandeIntegration> findAll() throws SQLException {
         java.util.List<DemandeIntegration> demandes = new java.util.ArrayList<>();
         String sql = "SELECT d.id, d.dateDemande, d.statut, d.membre_id, d.club_id, " +
-                     "u.nom as nomMembre, u.prenom as prenomMembre, u.email as emailMembre, " +
-                     "c.nom as nomClub " +
-                     "FROM DemandeIntegration d " +
-                     "LEFT JOIN Utilisateur u ON d.membre_id = u.id " +
-                     "LEFT JOIN Club c ON d.club_id = c.id " +
-                     "ORDER BY d.dateDemande DESC";
-        
+                "u.nom as nomMembre, u.prenom as prenomMembre, u.email as emailMembre, " +
+                "c.nom as nomClub " +
+                "FROM DemandeIntegration d " +
+                "LEFT JOIN Utilisateur u ON d.membre_id = u.id " +
+                "LEFT JOIN Club c ON d.club_id = c.id " +
+                "ORDER BY d.dateDemande DESC";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 DemandeIntegration demande = new DemandeIntegration();
                 demande.setId(rs.getLong("id"));
@@ -121,11 +121,11 @@ public class DemandeIntegrationDAO {
      * Valide une demande d'intégration
      */
     public boolean validerDemande(Long demandeId) throws SQLException {
-        String sql = "UPDATE DemandeIntegration SET statut = 'APPROUVE' WHERE id = ?";
-        
+        String sql = "UPDATE DemandeIntegration SET statut = 'ACCEPTEE' WHERE id = ?";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, demandeId);
             return stmt.executeUpdate() > 0;
         }
@@ -135,14 +135,48 @@ public class DemandeIntegrationDAO {
      * Refuse une demande d'intégration
      */
     public boolean refuserDemande(Long demandeId) throws SQLException {
-        String sql = "UPDATE DemandeIntegration SET statut = 'REFUSE' WHERE id = ?";
-        
+        String sql = "UPDATE DemandeIntegration SET statut = 'REFUSEE' WHERE id = ?";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, demandeId);
             return stmt.executeUpdate() > 0;
         }
     }
-}
 
+    /**
+     * Récupère les demandes d'intégration en attente pour un club spécifique
+     */
+    public java.util.List<DemandeIntegration> getPendingDemandesByClubId(Long clubId) throws SQLException {
+        java.util.List<DemandeIntegration> demandes = new java.util.ArrayList<>();
+        String sql = "SELECT d.id, d.dateDemande, d.statut, d.membre_id, d.club_id, " +
+                "u.nom as nomMembre, u.prenom as prenomMembre, u.email as emailMembre " +
+                "FROM DemandeIntegration d " +
+                "LEFT JOIN Utilisateur u ON d.membre_id = u.id " +
+                "WHERE d.club_id = ? AND d.statut = 'EN_ATTENTE' " +
+                "ORDER BY d.dateDemande DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, clubId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DemandeIntegration demande = new DemandeIntegration();
+                    demande.setId(rs.getLong("id"));
+                    demande.setDateDemande(rs.getDate("dateDemande"));
+                    demande.setStatut(rs.getString("statut"));
+                    demande.setMembreId(rs.getLong("membre_id"));
+                    demande.setClubId(rs.getLong("club_id"));
+                    demande.setNomMembre(rs.getString("nomMembre"));
+                    demande.setPrenomMembre(rs.getString("prenomMembre"));
+                    demande.setEmailMembre(rs.getString("emailMembre"));
+                    demandes.add(demande);
+                }
+            }
+        }
+        return demandes;
+    }
+}

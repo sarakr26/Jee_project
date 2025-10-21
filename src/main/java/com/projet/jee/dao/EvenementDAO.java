@@ -131,16 +131,11 @@ public class EvenementDAO {
      */
     public List<Evenement> findEvenementsProchains() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-<<<<<<< HEAD
-    // Return all future events (dateDebut on or after today). Include any statut.
-    String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
-             "FROM Evenement WHERE dateDebut >= CURDATE() " +
-             "ORDER BY dateDebut ASC";
-=======
+
         String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
                      "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) " +
                      "AND statut = 'PLANIFIE' ORDER BY dateDebut ASC";
->>>>>>> fixeven
+
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
