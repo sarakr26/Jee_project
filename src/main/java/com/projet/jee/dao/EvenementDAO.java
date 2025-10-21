@@ -1,10 +1,15 @@
 package com.projet.jee.dao;
 
-import com.projet.jee.model.Evenement;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.projet.jee.model.Evenement;
 
 /**
  * DAO pour la gestion des événements
@@ -138,9 +143,10 @@ public class EvenementDAO {
      */
     public List<Evenement> findEvenementsProchains() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
-                     "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) " +
-                     "AND statut = 'PLANIFIE' ORDER BY dateDebut ASC";
+    // Return all future events (dateDebut on or after today). Include any statut.
+    String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+             "FROM Evenement WHERE dateDebut >= CURDATE() " +
+             "ORDER BY dateDebut ASC";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);

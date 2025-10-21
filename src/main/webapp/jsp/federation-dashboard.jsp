@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -119,10 +120,10 @@
                                                     <p><strong>Date:</strong> <fmt:formatDate value="${demande.dateDemande}" pattern="dd/MM/yyyy"/></p>
                                                 </div>
                                                 <div class="request-actions">
-                                                    <button class="btn-approve" onclick="validerDemande(${demande.id}, 'APPROUVE')">
+                                                    <button class="btn-approve" data-demande-id="${demande.id}" onclick="validerDemande(this.dataset.demandeId, 'APPROUVE')">
                                                         <i class="fas fa-check"></i> Valider
                                                     </button>
-                                                    <button class="btn-reject" onclick="validerDemande(${demande.id}, 'REFUSE')">
+                                                    <button class="btn-reject" data-demande-id="${demande.id}" onclick="validerDemande(this.dataset.demandeId, 'REFUSE')">
                                                         <i class="fas fa-times"></i> Refuser
                                                     </button>
                                                 </div>
@@ -153,10 +154,10 @@
                                                     <p><strong>Date:</strong> <fmt:formatDate value="${demande.dateDemande}" pattern="dd/MM/yyyy"/></p>
                                                 </div>
                                                 <div class="request-actions">
-                                                    <button class="btn-approve" onclick="validerIntegration(${demande.id}, 'APPROUVE')">
+                                                    <button class="btn-approve" data-demande-id="${demande.id}" onclick="validerIntegration(this.dataset.demandeId, 'APPROUVE')">
                                                         <i class="fas fa-check"></i> Valider
                                                     </button>
-                                                    <button class="btn-reject" onclick="validerIntegration(${demande.id}, 'REFUSE')">
+                                                    <button class="btn-reject" data-demande-id="${demande.id}" onclick="validerIntegration(this.dataset.demandeId, 'REFUSE')">
                                                         <i class="fas fa-times"></i> Refuser
                                                     </button>
                                                 </div>
@@ -210,12 +211,35 @@
                                         <c:forEach var="event" items="${evenementsProchains}">
                                             <div class="event-item">
                                                 <div class="event-info">
-                                                    <h4>${event.titre}</h4>
-                                                    <p><i class="fas fa-map-marker-alt"></i> ${event.lieu}</p>
-                                                    <p><i class="fas fa-calendar"></i> <fmt:formatDate value="${event.dateDebut}" pattern="dd/MM/yyyy"/></p>
+                                                    <h4>${fn:escapeXml(event.titre)}</h4>
+                                                    <c:if test="${not empty event.lieu}">
+                                                        <p><i class="fas fa-map-marker-alt"></i> ${fn:escapeXml(event.lieu)}</p>
+                                                    </c:if>
+                                                    <p><i class="fas fa-calendar"></i>
+                                                        <fmt:formatDate value="${event.dateDebut}" pattern="dd/MM/yyyy"/>
+                                                        <c:if test="${not empty event.dateFin}">
+                                                            &nbsp;-&nbsp;<fmt:formatDate value="${event.dateFin}" pattern="dd/MM/yyyy"/>
+                                                        </c:if>
+                                                    </p>
+                                                    <c:if test="${not empty event.description}">
+                                                        <p class="event-desc">${fn:escapeXml(event.description)}</p>
+                                                    </c:if>
                                                 </div>
-                                                <div class="event-status">
-                                                    <i class="fas fa-clock"></i>
+                                                <div class="event-status" title="${event.statut}">
+                                                    <c:choose>
+                                                        <c:when test="${event.statut == 'PLANIFIE'}">
+                                                            <span class="status-badge planned"><i class="fas fa-clock"></i> Planifié</span>
+                                                        </c:when>
+                                                        <c:when test="${event.statut == 'ANNULE'}">
+                                                            <span class="status-badge cancelled"><i class="fas fa-times"></i> Annulé</span>
+                                                        </c:when>
+                                                        <c:when test="${event.statut == 'TERMINE'}">
+                                                            <span class="status-badge finished"><i class="fas fa-check"></i> Terminé</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="status-badge">${event.statut}</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                             </div>
                                         </c:forEach>
