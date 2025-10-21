@@ -130,3 +130,23 @@ INSERT INTO Club (nom, logo, description, statut, president_id) VALUES
 ('Les Pions d''Or', NULL, 'Club convivial pour débutants et amateurs. Ambiance chaleureuse et formations gratuites pour les nouveaux membres.', 'ACTIF', NULL),
 ('Académie des Échecs', NULL, 'Formation professionnelle d''échecs avec des entraîneurs certifiés. Préparation aux compétitions nationales et internationales.', 'ACTIF', NULL),
 ('Club des Champions', NULL, 'Rejoignez l''élite des joueurs d''échecs ! Club compétitif avec des membres classés et des tournois réguliers.', 'ACTIF', NULL)
+
+
+
+
+-- Script de test pour créer un utilisateur FEDERATION et des données de test
+
+-- Créer un utilisateur FEDERATION avec mot de passe "test123" hashé
+INSERT INTO Utilisateur (nom, prenom, email, motDePasse, cin, role, club_id) 
+VALUES ('Federation', 'Admin', 'federation@chess.ma', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhW', 'F123456', 'FEDERATION', NULL);
+
+-- Créer quelques demandes de création de club en attente
+INSERT INTO DemandeCreationClub (nomClub, description, dateDemande, statut, president_id) 
+VALUES 
+('Club des Rois', 'Un club pour les joueurs expérimentés', '2024-01-15', 'EN_ATTENTE', 1),
+('Club des Pions', 'Un club pour les débutants', '2024-01-16', 'EN_ATTENTE', 2),
+('Club des Cavaliers', 'Un club compétitif', '2024-01-17', 'EN_ATTENTE', 3);
+
+-- Créer quelques demandes d'intégration en attente
+
+-- Créer quelques événements
