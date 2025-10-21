@@ -40,6 +40,8 @@ public class LoginServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/membre/dashboard");
             } else if ("PRESIDENT".equals(u.getRole())) {
                 resp.sendRedirect(req.getContextPath() + "/president/dashboard");
+            } else if ("FEDERATION".equals(u.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/federation/dashboard");
             } else {
                 resp.sendRedirect(req.getContextPath() + "/jsp/auth/profile.jsp");
             }

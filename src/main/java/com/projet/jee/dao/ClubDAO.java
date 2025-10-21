@@ -64,5 +64,32 @@ public class ClubDAO {
         }
         return null;
     }
+
+    /**
+     * Récupère les clubs par statut
+     */
+    public List<Club> findByStatut(String statut) throws SQLException {
+        List<Club> clubs = new ArrayList<>();
+        String sql = "SELECT id, nom, logo, description, statut, president_id FROM Club WHERE statut = ? ORDER BY nom";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, statut);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Club club = new Club();
+                    club.setId(rs.getLong("id"));
+                    club.setNom(rs.getString("nom"));
+                    club.setLogo(rs.getString("logo"));
+                    club.setDescription(rs.getString("description"));
+                    club.setStatut(rs.getString("statut"));
+                    club.setPresidentId(rs.getLong("president_id"));
+                    clubs.add(club);
+                }
+            }
+        }
+        return clubs;
+    }
 }
 

@@ -114,6 +114,46 @@ public class EvenementDAO {
     }
 
     /**
+     * Récupère les événements urgents (dans les 7 prochains jours)
+     */
+    public List<Evenement> findEvenementsUrgents() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) " +
+                     "AND statut IN ('PLANIFIE', 'EN_COURS') ORDER BY dateDebut ASC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                evenements.add(mapRow(rs));
+            }
+        }
+        return evenements;
+    }
+
+    /**
+     * Récupère les événements prochains (dans les 30 prochains jours)
+     */
+    public List<Evenement> findEvenementsProchains() throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+                     "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) " +
+                     "AND statut = 'PLANIFIE' ORDER BY dateDebut ASC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                evenements.add(mapRow(rs));
+            }
+        }
+        return evenements;
+    }
+
+    /**
      * Map un ResultSet vers un objet Evenement
      */
     private Evenement mapRow(ResultSet rs) throws SQLException {

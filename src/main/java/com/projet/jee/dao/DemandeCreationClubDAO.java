@@ -109,5 +109,65 @@ public class DemandeCreationClubDAO {
         }
         return demandes;
     }
+
+    /**
+     * Récupère toutes les demandes
+     */
+    public List<DemandeCreationClub> findAll() throws SQLException {
+        List<DemandeCreationClub> demandes = new ArrayList<>();
+        String sql = "SELECT d.id, d.nomClub, d.description, d.dateDemande, d.statut, d.president_id, " +
+                     "u.nom as nomPresident, u.prenom as prenomPresident, u.email as emailPresident " +
+                     "FROM DemandeCreationClub d " +
+                     "LEFT JOIN Utilisateur u ON d.president_id = u.id " +
+                     "ORDER BY d.dateDemande DESC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                DemandeCreationClub demande = new DemandeCreationClub();
+                demande.setId(rs.getLong("id"));
+                demande.setNomClub(rs.getString("nomClub"));
+                demande.setDescription(rs.getString("description"));
+                demande.setDateDemande(rs.getDate("dateDemande"));
+                demande.setStatut(rs.getString("statut"));
+                demande.setPresidentId(rs.getLong("president_id"));
+                demande.setNomPresident(rs.getString("nomPresident"));
+                demande.setPrenomPresident(rs.getString("prenomPresident"));
+                demande.setEmailPresident(rs.getString("emailPresident"));
+                demandes.add(demande);
+            }
+        }
+        return demandes;
+    }
+
+    /**
+     * Valide une demande de création de club
+     */
+    public boolean validerDemande(Long demandeId) throws SQLException {
+        String sql = "UPDATE DemandeCreationClub SET statut = 'APPROUVE' WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, demandeId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Refuse une demande de création de club
+     */
+    public boolean refuserDemande(Long demandeId) throws SQLException {
+        String sql = "UPDATE DemandeCreationClub SET statut = 'REFUSE' WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, demandeId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }
 

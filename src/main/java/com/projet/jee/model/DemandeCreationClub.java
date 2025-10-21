@@ -9,6 +9,11 @@ public class DemandeCreationClub {
     private Date dateDemande;
     private String statut; // EN_ATTENTE, ACCEPTEE, REFUSEE
     private Long presidentId;
+    
+    // Propriétés supplémentaires pour l'affichage
+    private String nomPresident;
+    private String prenomPresident;
+    private String emailPresident;
 
     public Long getId() {
         return id;
@@ -56,6 +61,30 @@ public class DemandeCreationClub {
 
     public void setPresidentId(Long presidentId) {
         this.presidentId = presidentId;
+    }
+
+    public String getNomPresident() {
+        return nomPresident;
+    }
+
+    public void setNomPresident(String nomPresident) {
+        this.nomPresident = nomPresident;
+    }
+
+    public String getPrenomPresident() {
+        return prenomPresident;
+    }
+
+    public void setPrenomPresident(String prenomPresident) {
+        this.prenomPresident = prenomPresident;
+    }
+
+    public String getEmailPresident() {
+        return emailPresident;
+    }
+
+    public void setEmailPresident(String emailPresident) {
+        this.emailPresident = emailPresident;
     }
 }
 

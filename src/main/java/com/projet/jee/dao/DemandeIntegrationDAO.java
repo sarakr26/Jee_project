@@ -82,5 +82,67 @@ public class DemandeIntegrationDAO {
         }
         return null;
     }
+
+    /**
+     * Récupère toutes les demandes d'intégration
+     */
+    public java.util.List<DemandeIntegration> findAll() throws SQLException {
+        java.util.List<DemandeIntegration> demandes = new java.util.ArrayList<>();
+        String sql = "SELECT d.id, d.dateDemande, d.statut, d.membre_id, d.club_id, " +
+                     "u.nom as nomMembre, u.prenom as prenomMembre, u.email as emailMembre, " +
+                     "c.nom as nomClub " +
+                     "FROM DemandeIntegration d " +
+                     "LEFT JOIN Utilisateur u ON d.membre_id = u.id " +
+                     "LEFT JOIN Club c ON d.club_id = c.id " +
+                     "ORDER BY d.dateDemande DESC";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                DemandeIntegration demande = new DemandeIntegration();
+                demande.setId(rs.getLong("id"));
+                demande.setDateDemande(rs.getDate("dateDemande"));
+                demande.setStatut(rs.getString("statut"));
+                demande.setMembreId(rs.getLong("membre_id"));
+                demande.setClubId(rs.getLong("club_id"));
+                demande.setNomMembre(rs.getString("nomMembre"));
+                demande.setPrenomMembre(rs.getString("prenomMembre"));
+                demande.setEmailMembre(rs.getString("emailMembre"));
+                demande.setNomClub(rs.getString("nomClub"));
+                demandes.add(demande);
+            }
+        }
+        return demandes;
+    }
+
+    /**
+     * Valide une demande d'intégration
+     */
+    public boolean validerDemande(Long demandeId) throws SQLException {
+        String sql = "UPDATE DemandeIntegration SET statut = 'APPROUVE' WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, demandeId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Refuse une demande d'intégration
+     */
+    public boolean refuserDemande(Long demandeId) throws SQLException {
+        String sql = "UPDATE DemandeIntegration SET statut = 'REFUSE' WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, demandeId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }
 
