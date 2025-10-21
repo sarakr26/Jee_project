@@ -6,10 +6,11 @@ public class DemandeCreationClub {
     private Long id;
     private String nomClub;
     private String description;
+    private String logo;
     private Date dateDemande;
     private String statut; // EN_ATTENTE, ACCEPTEE, REFUSEE
     private Long presidentId;
-    
+
     // Propriétés supplémentaires pour l'affichage
     private String nomPresident;
     private String prenomPresident;
@@ -37,6 +38,14 @@ public class DemandeCreationClub {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public Date getDateDemande() {
@@ -87,4 +96,3 @@ public class DemandeCreationClub {
         this.emailPresident = emailPresident;
     }
 }
-

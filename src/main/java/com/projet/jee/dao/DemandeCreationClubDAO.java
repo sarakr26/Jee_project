@@ -18,18 +18,21 @@ public class DemandeCreationClubDAO {
     /**
      * Crée une nouvelle demande de création de club
      */
-    public boolean createDemande(String nomClub, String description, Long presidentId) throws SQLException {
-        String sql = "INSERT INTO DemandeCreationClub (nomClub, description, dateDemande, statut, president_id) " +
-                     "VALUES (?, ?, ?, 'EN_ATTENTE', ?)";
-        
+    public boolean createDemande(String nomClub, String description, String logo, Long presidentId)
+            throws SQLException {
+        String sql = "INSERT INTO DemandeCreationClub (nomClub, description, logo, dateDemande, statut, president_id) "
+                +
+                "VALUES (?, ?, ?, ?, 'EN_ATTENTE', ?)";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, nomClub);
             stmt.setString(2, description);
-            stmt.setDate(3, new Date(System.currentTimeMillis()));
-            stmt.setLong(4, presidentId);
-            
+            stmt.setString(3, logo);
+            stmt.setDate(4, new Date(System.currentTimeMillis()));
+            stmt.setLong(5, presidentId);
+
             int rows = stmt.executeUpdate();
             return rows > 0;
         }
@@ -40,12 +43,12 @@ public class DemandeCreationClubDAO {
      */
     public boolean hasPendingDemande(Long presidentId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM DemandeCreationClub WHERE president_id = ? AND statut = 'EN_ATTENTE'";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, presidentId);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -60,18 +63,19 @@ public class DemandeCreationClubDAO {
      */
     public List<DemandeCreationClub> getDemandesEnAttente() throws SQLException {
         List<DemandeCreationClub> demandes = new ArrayList<>();
-        String sql = "SELECT id, nomClub, description, dateDemande, statut, president_id " +
-                     "FROM DemandeCreationClub WHERE statut = 'EN_ATTENTE' ORDER BY dateDemande DESC";
-        
+        String sql = "SELECT id, nomClub, description, logo, dateDemande, statut, president_id " +
+                "FROM DemandeCreationClub WHERE statut = 'EN_ATTENTE' ORDER BY dateDemande DESC";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 DemandeCreationClub demande = new DemandeCreationClub();
                 demande.setId(rs.getLong("id"));
                 demande.setNomClub(rs.getString("nomClub"));
                 demande.setDescription(rs.getString("description"));
+                demande.setLogo(rs.getString("logo"));
                 demande.setDateDemande(rs.getDate("dateDemande"));
                 demande.setStatut(rs.getString("statut"));
                 demande.setPresidentId(rs.getLong("president_id"));
@@ -86,20 +90,21 @@ public class DemandeCreationClubDAO {
      */
     public List<DemandeCreationClub> getDemandesByPresident(Long presidentId) throws SQLException {
         List<DemandeCreationClub> demandes = new ArrayList<>();
-        String sql = "SELECT id, nomClub, description, dateDemande, statut, president_id " +
-                     "FROM DemandeCreationClub WHERE president_id = ? ORDER BY dateDemande DESC";
-        
+        String sql = "SELECT id, nomClub, description, logo, dateDemande, statut, president_id " +
+                "FROM DemandeCreationClub WHERE president_id = ? ORDER BY dateDemande DESC";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, presidentId);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     DemandeCreationClub demande = new DemandeCreationClub();
                     demande.setId(rs.getLong("id"));
                     demande.setNomClub(rs.getString("nomClub"));
                     demande.setDescription(rs.getString("description"));
+                    demande.setLogo(rs.getString("logo"));
                     demande.setDateDemande(rs.getDate("dateDemande"));
                     demande.setStatut(rs.getString("statut"));
                     demande.setPresidentId(rs.getLong("president_id"));
@@ -115,21 +120,22 @@ public class DemandeCreationClubDAO {
      */
     public List<DemandeCreationClub> findAll() throws SQLException {
         List<DemandeCreationClub> demandes = new ArrayList<>();
-        String sql = "SELECT d.id, d.nomClub, d.description, d.dateDemande, d.statut, d.president_id, " +
-                     "u.nom as nomPresident, u.prenom as prenomPresident, u.email as emailPresident " +
-                     "FROM DemandeCreationClub d " +
-                     "LEFT JOIN Utilisateur u ON d.president_id = u.id " +
-                     "ORDER BY d.dateDemande DESC";
-        
+        String sql = "SELECT d.id, d.nomClub, d.description, d.logo, d.dateDemande, d.statut, d.president_id, " +
+                "u.nom as nomPresident, u.prenom as prenomPresident, u.email as emailPresident " +
+                "FROM DemandeCreationClub d " +
+                "LEFT JOIN Utilisateur u ON d.president_id = u.id " +
+                "ORDER BY d.dateDemande DESC";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 DemandeCreationClub demande = new DemandeCreationClub();
                 demande.setId(rs.getLong("id"));
                 demande.setNomClub(rs.getString("nomClub"));
                 demande.setDescription(rs.getString("description"));
+                demande.setLogo(rs.getString("logo"));
                 demande.setDateDemande(rs.getDate("dateDemande"));
                 demande.setStatut(rs.getString("statut"));
                 demande.setPresidentId(rs.getLong("president_id"));
@@ -147,10 +153,10 @@ public class DemandeCreationClubDAO {
      */
     public boolean validerDemande(Long demandeId) throws SQLException {
         String sql = "UPDATE DemandeCreationClub SET statut = 'APPROUVE' WHERE id = ?";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, demandeId);
             return stmt.executeUpdate() > 0;
         }
@@ -161,13 +167,27 @@ public class DemandeCreationClubDAO {
      */
     public boolean refuserDemande(Long demandeId) throws SQLException {
         String sql = "UPDATE DemandeCreationClub SET statut = 'REFUSE' WHERE id = ?";
-        
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, demandeId);
             return stmt.executeUpdate() > 0;
         }
     }
-}
 
+    /**
+     * Supprime une demande de création de club (seulement si EN_ATTENTE)
+     */
+    public boolean deleteDemande(Long demandeId, Long presidentId) throws SQLException {
+        String sql = "DELETE FROM DemandeCreationClub WHERE id = ? AND president_id = ? AND statut = 'EN_ATTENTE'";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, demandeId);
+            stmt.setLong(2, presidentId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+}

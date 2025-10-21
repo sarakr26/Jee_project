@@ -364,6 +364,25 @@
             color: white;
         }
 
+        .demande-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+
+        .demande-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .user-welcome {
             color: #666;
             font-size: 1rem;
@@ -405,7 +424,7 @@
                 </div>
                 <% session.removeAttribute("successMessage"); %>
             <% } %>
-            
+
             <% if (session.getAttribute("errorMessage") != null) { %>
                 <div class="message message-error">
                     <i class="fas fa-exclamation-circle"></i>
@@ -422,7 +441,7 @@
                         Événements de la Fédération
                     </h2>
                 </div>
-                
+
                 <% if (evenements != null && !evenements.isEmpty()) { %>
                     <div class="events-grid">
                         <% for (Evenement evt : evenements) { %>
@@ -455,21 +474,43 @@
                         Mes Demandes de Création de Club
                     </h2>
                 </div>
-                
+
                 <% if (demandes != null && !demandes.isEmpty()) { %>
                     <div class="demandes-list">
                         <% for (DemandeCreationClub demande : demandes) { %>
                             <div class="demande-item">
-                                <div class="demande-header">
-                                    <div class="demande-title"><%= demande.getNomClub() %></div>
-                                    <span class="demande-status status-<%= demande.getStatut() %>"><%= demande.getStatut() %></span>
+                                <div style="display: flex; gap: 15px; align-items: start;">
+                                    <% if (demande.getLogo() != null && !demande.getLogo().isEmpty()) { %>
+                                        <div class="demande-logo">
+                                            <img src="<%= request.getContextPath() %>/uploads/logos/<%= demande.getLogo() %>" 
+                                                 alt="Logo <%= demande.getNomClub() %>"
+                                                 onerror="this.style.display='none'">
+                                        </div>
+                                    <% } %>
+                                    <div style="flex: 1;">
+                                        <div class="demande-header">
+                                            <div class="demande-title"><%= demande.getNomClub() %></div>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <span class="demande-status status-<%= demande.getStatut() %>"><%= demande.getStatut() %></span>
+                                                <% if ("EN_ATTENTE".equals(demande.getStatut())) { %>
+                                                    <button class="btn-delete"
+                                                            data-id="<%= demande.getId() %>"
+                                                            data-nom="<%= demande.getNomClub() %>"
+                                                            onclick="confirmerSuppression(this)"
+                                                            title="Supprimer cette demande">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <p style="color: #666; margin: 10px 0;">
+                                            <%= demande.getDescription() != null && !demande.getDescription().isEmpty() ? demande.getDescription() : "Aucune description" %>
+                                        </p>
+                                        <small style="color: #999;">
+                                            <i class="fas fa-clock"></i> Demande envoyée le <%= demande.getDateDemande() %>
+                                        </small>
+                                    </div>
                                 </div>
-                                <p style="color: #666; margin: 10px 0;">
-                                    <%= demande.getDescription() != null && !demande.getDescription().isEmpty() ? demande.getDescription() : "Aucune description" %>
-                                </p>
-                                <small style="color: #999;">
-                                    <i class="fas fa-clock"></i> Demande envoyée le <%= demande.getDateDemande() %>
-                                </small>
                             </div>
                         <% } %>
                     </div>
@@ -491,20 +532,32 @@
                 <h2><i class="fas fa-plus-circle"></i> Créer un Nouveau Club</h2>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
-            <form action="<%= request.getContextPath() %>/president/creer-club" method="post">
+            <form action="<%= request.getContextPath() %>/president/creer-club" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="nomClub">
                         <i class="fas fa-chess-knight"></i> Nom du Club *
                     </label>
-                    <input type="text" id="nomClub" name="nomClub" required 
-                           placeholder="Exemple: Club d'Échecs Royal">
+                    <input type="text" id="nomClub" name="nomClub" required placeholder="Exemple: Club d'Échecs Royal">
                 </div>
                 <div class="form-group">
                     <label for="description">
                         <i class="fas fa-align-left"></i> Description
                     </label>
-                    <textarea id="description" name="description" 
-                              placeholder="Décrivez brièvement votre club, ses objectifs, etc."></textarea>
+                    <textarea id="description" name="description" placeholder="Décrivez brièvement votre club, ses objectifs, etc."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="logo">
+                        <i class="fas fa-image"></i> Logo du Club
+                    </label>
+                    <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/gif,image/svg+xml"
+                           onchange="previewLogo(event)">
+                    <small style="color: #999; display: block; margin-top: 5px;">
+                        Formats acceptés: JPG, PNG, GIF, SVG (Max: 10MB)
+                    </small>
+                    <div id="logoPreview" style="margin-top: 10px; display: none;">
+                        <img id="logoPreviewImg" src="" alt="Aperçu du logo"
+                             style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 2px solid #ddd;">
+                    </div>
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">
@@ -525,16 +578,50 @@
 
         function closeModal() {
             document.getElementById('createClubModal').style.display = 'none';
+            document.getElementById('logoPreview').style.display = 'none';
+            document.getElementById('logoPreviewImg').src = '';
         }
 
-        // Fermer le modal si on clique en dehors
+        function previewLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('logoPreviewImg').src = e.target.result;
+                    document.getElementById('logoPreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         window.onclick = function(event) {
             const modal = document.getElementById('createClubModal');
             if (event.target == modal) {
                 closeModal();
             }
         }
+
+        function confirmerSuppression(button) {
+            const id = button.dataset.id;
+            const nomClub = button.dataset.nom;
+            if (confirm('Êtes-vous sûr de vouloir supprimer la demande pour "' + nomClub + '" ?\n\nCette action est irréversible.')) {
+                // Créer un formulaire pour envoyer la requête POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '<%= request.getContextPath() %>/president/supprimer-demande';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'demandeId';
+                input.value = id;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
     </script>
 </body>
+
 </html>
 
