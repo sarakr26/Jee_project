@@ -21,7 +21,7 @@ public class EvenementDAO {
      */
     public List<Evenement> getAllEvenementsPlanifies() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
                      "FROM Evenement WHERE statut = 'PLANIFIE' ORDER BY dateDebut";
         
         try (Connection conn = DBConnection.getConnection();
@@ -40,7 +40,7 @@ public class EvenementDAO {
      */
     public List<Evenement> getAllEvenements() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
                      "FROM Evenement ORDER BY dateDebut DESC";
         
         try (Connection conn = DBConnection.getConnection();
@@ -58,7 +58,7 @@ public class EvenementDAO {
      * Récupère un événement par son ID
      */
     public Evenement getEvenementById(Long id) throws SQLException {
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
                      "FROM Evenement WHERE id = ?";
         
         try (Connection conn = DBConnection.getConnection();
@@ -87,7 +87,7 @@ public class EvenementDAO {
      * Crée un nouvel événement
      */
     public Evenement create(Evenement e) throws SQLException {
-        String sql = "INSERT INTO Evenement (titre, description, lieu, dateDebut, dateFin, statut, federation_id) VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO Evenement (titre, description, lieu, dateDebut, dateFin, statut) VALUES (?,?,?,?,?,?)";
         try (Connection c = DBConnection.getConnection(); 
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, e.getTitre());
@@ -96,8 +96,7 @@ public class EvenementDAO {
             ps.setDate(4, e.getDateDebut());
             ps.setDate(5, e.getDateFin());
             ps.setString(6, e.getStatut());
-            if (e.getFederationId() == null) ps.setNull(7, Types.BIGINT);
-            else ps.setLong(7, e.getFederationId());
+            
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) e.setId(keys.getLong(1));
@@ -106,24 +105,13 @@ public class EvenementDAO {
         return e;
     }
 
-    /**
-     * Supprime un événement par son ID
-     */
-    public boolean delete(Long id) throws SQLException {
-        String sql = "DELETE FROM Evenement WHERE id = ?";
-        try (Connection c = DBConnection.getConnection(); 
-             PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setLong(1, id);
-            return ps.executeUpdate() > 0;
-        }
-    }
 
     /**
      * Récupère les événements urgents (dans les 7 prochains jours)
      */
     public List<Evenement> findEvenementsUrgents() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
                      "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) " +
                      "AND statut IN ('PLANIFIE', 'EN_COURS') ORDER BY dateDebut ASC";
         
@@ -143,10 +131,16 @@ public class EvenementDAO {
      */
     public List<Evenement> findEvenementsProchains() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
+<<<<<<< HEAD
     // Return all future events (dateDebut on or after today). Include any statut.
     String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, federation_id " +
              "FROM Evenement WHERE dateDebut >= CURDATE() " +
              "ORDER BY dateDebut ASC";
+=======
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut " +
+                     "FROM Evenement WHERE dateDebut BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) " +
+                     "AND statut = 'PLANIFIE' ORDER BY dateDebut ASC";
+>>>>>>> fixeven
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -171,8 +165,6 @@ public class EvenementDAO {
         e.setDateDebut(rs.getDate("dateDebut"));
         e.setDateFin(rs.getDate("dateFin"));
         e.setStatut(rs.getString("statut"));
-        long fid = rs.getLong("federation_id");
-        if (!rs.wasNull()) e.setFederationId(fid);
         return e;
     }
 }

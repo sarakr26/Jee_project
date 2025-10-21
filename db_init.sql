@@ -64,12 +64,9 @@ CREATE TABLE Evenement (
   lieu VARCHAR(255),
   dateDebut DATE,
   dateFin DATE,
-  statut ENUM('PLANIFIE', 'ANNULE', 'TERMINE') NOT NULL,
-  federation_id BIGINT NOT NULL,
-  FOREIGN KEY (federation_id) REFERENCES Utilisateur(id)
+  statut ENUM('PLANIFIE', 'ANNULE', 'TERMINE') NOT NULL
 );
-
--- -----------------------------------------------------
+ALTER TABLE Evenement DROP FOREIGN KEY evenement_ibfk_1; ALTER TABLE Evenement DROP COLUMN federation_id;-- -----------------------------------------------------
 -- Table Participation
 -- Table de liaison pour suivre la participation des membres aux événements.
 -- -----------------------------------------------------
@@ -118,12 +115,12 @@ CREATE TABLE IF NOT EXISTS DemandeCreationClub (
   FOREIGN KEY (president_id) REFERENCES Utilisateur(id) ON DELETE CASCADE
 );
 -
-INSERT INTO Evenement (titre, description, lieu, dateDebut, dateFin, statut, federation_id) VALUES
-('Tournoi National d''Échecs 2025', 'Grand tournoi national réunissant les meilleurs joueurs du pays. Ouvert à tous les niveaux.', 'Palais des Congrès, Paris', '2025-11-15', '2025-11-17', 'PLANIFIE', 4),
-('Championnat Régional', 'Compétition régionale pour promouvoir les jeunes talents.', 'Centre Sportif Municipal, Lyon', '2025-12-05', '2025-12-06', 'PLANIFIE', 4),
-('Tournoi Blitz d''Hiver', 'Tournoi de parties rapides pour tous les passionnés d''échecs.', 'Salle Polyvalente, Marseille', '2026-01-20', '2026-01-20', 'PLANIFIE', 4),
-('Festival des Échecs', 'Festival combinant tournois, ateliers et conférences avec des grands maîtres.', 'Espace Culturel, Toulouse', '2026-02-10', '2026-02-12', 'PLANIFIE', 4),
-('Open International de Printemps', 'Tournoi international ouvert à tous avec des prix attractifs.', 'Centre de Congrès, Nice', '2026-03-25', '2026-03-28', 'PLANIFIE', 4);
+INSERT INTO evenement (titre, description, lieu, dateDebut, dateFin, statut) VALUES
+('Tournoi National d''Échecs 2025', 'Grand tournoi national réunissant les meilleurs joueurs du pays. Ouvert à tous les niveaux.', 'Palais des Congrès, Paris', '2025-11-15', '2025-11-17', 'PLANIFIE'),
+('Championnat Régional', 'Compétition régionale pour promouvoir les jeunes talents.', 'Centre Sportif Municipal, Lyon', '2025-12-05', '2025-12-06', 'PLANIFIE'),
+('Tournoi Blitz d''Hiver', 'Tournoi de parties rapides pour tous les passionnés d''échecs.', 'Salle Polyvalente, Marseille', '2026-01-20', '2026-01-20', 'PLANIFIE'),
+('Festival des Échecs', 'Festival combinant tournois, ateliers et conférences avec des grands maîtres.', 'Espace Culturel, Toulouse', '2026-02-10', '2026-02-12', 'PLANIFIE'),
+('Open International de Printemps', 'Tournoi international ouvert à tous avec des prix attractifs.', 'Centre de Congrès, Nice', '2026-03-25', '2026-03-28', 'PLANIFIE');
 
 INSERT INTO Club (nom, logo, description, statut, president_id) VALUES
 ('Club Royal d''Échecs', NULL, 'Le club le plus ancien de la ville avec une histoire riche. Nous organisons des tournois hebdomadaires et des cours pour tous les niveaux.', 'ACTIF', NULL),
@@ -149,6 +146,7 @@ VALUES
 ('Club des Cavaliers', 'Un club compétitif', '2024-01-17', 'EN_ATTENTE', 3);
 
 -- Créer quelques demandes d'intégration en attente
+<<<<<<< HEAD
 INSERT INTO DemandeIntegration (dateDemande, statut, membre_id, club_id) 
 VALUES 
 ('2024-01-15', 'EN_ATTENTE', 4, 1),
@@ -159,3 +157,7 @@ VALUES
 
 
 ALTER TABLE DemandeCreationClub ADD COLUMN logo VARCHAR(255);
+=======
+
+-- Créer quelques événements
+>>>>>>> fixeven

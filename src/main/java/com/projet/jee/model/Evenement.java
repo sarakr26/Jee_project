@@ -10,11 +10,10 @@ public class Evenement {
     private Date dateDebut;
     private Date dateFin;
     private String statut;
-    private Long federationId;
 
     public Evenement() {}
 
-    public Evenement(Long id, String titre, String description, String lieu, Date dateDebut, Date dateFin, String statut, Long federationId) {
+    public Evenement(Long id, String titre, String description, String lieu, Date dateDebut, Date dateFin, String statut) {
         this.id = id;
         this.titre = titre;
         this.description = description;
@@ -22,7 +21,6 @@ public class Evenement {
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.statut = statut;
-        this.federationId = federationId;
     }
 
     public Long getId() { return id; }
@@ -45,7 +43,4 @@ public class Evenement {
 
     public String getStatut() { return statut; }
     public void setStatut(String statut) { this.statut = statut; }
-
-    public Long getFederationId() { return federationId; }
-    public void setFederationId(Long federationId) { this.federationId = federationId; }
 }
