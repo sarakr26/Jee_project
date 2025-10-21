@@ -1,7 +1,9 @@
 package com.projet.jee.Servlets;
 
 import com.projet.jee.dao.ClubDAO;
+import com.projet.jee.dao.EvenementDAO;
 import com.projet.jee.model.Club;
+import com.projet.jee.model.Evenement;
 import com.projet.jee.model.Utilisateur;
 
 import javax.servlet.ServletException;
@@ -16,6 +18,7 @@ import java.util.List;
 @WebServlet(name = "MemberDashboardServlet", urlPatterns = {"/membre/dashboard"})
 public class MemberDashboardServlet extends HttpServlet {
     private ClubDAO clubDAO = new ClubDAO();
+    private EvenementDAO evenementDAO = new EvenementDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -39,10 +42,15 @@ public class MemberDashboardServlet extends HttpServlet {
             // Récupérer tous les clubs actifs
             List<Club> clubs = clubDAO.getAllActiveClubs();
             request.setAttribute("clubs", clubs);
+            
+            // Récupérer tous les événements planifiés
+            List<Evenement> evenements = evenementDAO.getAllEvenementsPlanifies();
+            request.setAttribute("evenements", evenements);
+            
             request.getRequestDispatcher("/jsp/membre-dashboard.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Erreur lors de la récupération des clubs: " + e.getMessage());
+            request.setAttribute("error", "Erreur lors de la récupération des données: " + e.getMessage());
             request.getRequestDispatcher("/jsp/membre-dashboard.jsp").forward(request, response);
         }
     }
