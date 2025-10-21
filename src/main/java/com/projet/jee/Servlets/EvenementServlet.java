@@ -22,7 +22,17 @@ public class EvenementServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html;charset=UTF-8");
+        
+        String action = req.getParameter("action");
+        
         try {
+            if ("new".equals(action)) {
+                // Show create event form
+                req.getRequestDispatcher("/jsp/events/create.jsp").forward(req, resp);
+                return;
+            }
+            
+            // Default: show events list
             List<Evenement> list = dao.findAll();
             req.setAttribute("events", list);
             req.getRequestDispatcher("/jsp/events/list.jsp").forward(req, resp);
@@ -64,8 +74,6 @@ public class EvenementServlet extends HttpServlet {
             return;
         }
         e.setStatut(statut != null ? statut : "PLANIFIE");
-
-        // federationId: leave null when not available (anonymous create)
         try {
             dao.create(e);
             // success: redirect to list with a success message via session attribute

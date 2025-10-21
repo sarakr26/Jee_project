@@ -75,7 +75,7 @@
             <section class="quick-actions">
                 <h2><i class="fas fa-bolt"></i> Actions Rapides</h2>
                 <div class="actions-grid">
-                    <a href="${pageContext.request.contextPath}/jsp/events/create.jsp" class="action-btn">
+                    <a href="${pageContext.request.contextPath}/events?action=new" class="action-btn">
                         <i class="fas fa-plus"></i>
                         <span>Créer un Événement</span>
                     </a>
@@ -87,7 +87,7 @@
                         <i class="fas fa-clipboard-check"></i>
                         <span>Valider Demandes</span>
                     </a>
-                    <a href="${pageContext.request.contextPath}/events/list" class="action-btn">
+                    <a href="${pageContext.request.contextPath}/events" class="action-btn">
                         <i class="fas fa-list"></i>
                         <span>Gérer Événements</span>
                     </a>
