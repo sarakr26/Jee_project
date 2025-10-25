@@ -146,18 +146,6 @@ VALUES
 ('Club des Cavaliers', 'Un club compétitif', '2024-01-17', 'EN_ATTENTE', 3);
 
 -- Créer quelques demandes d'intégration en attente
-<<<<<<< HEAD
-INSERT INTO DemandeIntegration (dateDemande, statut, membre_id, club_id) 
-VALUES 
-('2024-01-15', 'EN_ATTENTE', 4, 1),
-('2024-01-16', 'EN_ATTENTE', 5, 2),
-('2024-01-17', 'EN_ATTENTE', 6, 3);
-
--- Créer quelques événements
 
 
-ALTER TABLE DemandeCreationClub ADD COLUMN logo VARCHAR(255);
-=======
-
--- Créer quelques événements
->>>>>>> fixeven
+ALTER TABLE Evenement DROP FOREIGN KEY evenement_ibfk_1; ALTER TABLE Evenement DROP COLUMN federation_id;

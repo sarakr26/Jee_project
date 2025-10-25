@@ -149,6 +149,90 @@ public class EvenementDAO {
     }
 
     /**
+     * Met à jour un événement existant
+     */
+    public Evenement update(Evenement e) throws SQLException {
+        String sql = "UPDATE Evenement SET titre=?, description=?, lieu=?, dateDebut=?, dateFin=?, statut=? WHERE id=?";
+        try (Connection c = DBConnection.getConnection(); 
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, e.getTitre());
+            ps.setString(2, e.getDescription());
+            ps.setString(3, e.getLieu());
+            ps.setDate(4, e.getDateDebut());
+            ps.setDate(5, e.getDateFin());
+            ps.setString(6, e.getStatut());
+            ps.setLong(7, e.getId());
+            
+            ps.executeUpdate();
+        }
+        return e;
+    }
+
+    /**
+     * Supprime un événement par son ID
+     */
+    public boolean delete(Long id) throws SQLException {
+        String sql = "DELETE FROM Evenement WHERE id=?";
+        try (Connection c = DBConnection.getConnection(); 
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    /**
+     * Récupère les participants inscrits à un événement
+     * (Cette méthode nécessite la table Participation)
+     */
+    public List<String> getParticipants(Long evenementId) throws SQLException {
+        List<String> participants = new ArrayList<>();
+        String sql = "SELECT u.nom, u.prenom, c.nom as club_nom " +
+                     "FROM Participation p " +
+                     "JOIN Utilisateur u ON p.membre_id = u.id " +
+                     "LEFT JOIN Club c ON u.club_id = c.id " +
+                     "WHERE p.evenement_id = ? AND p.statut IN ('INVITE', 'CONFIRME') " +
+                     "ORDER BY u.nom, u.prenom";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, evenementId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String nom = rs.getString("nom");
+                    String prenom = rs.getString("prenom");
+                    String clubNom = rs.getString("club_nom");
+                    String participant = nom + " " + prenom;
+                    if (clubNom != null) {
+                        participant += " (" + clubNom + ")";
+                    }
+                    participants.add(participant);
+                }
+            }
+        }
+        return participants;
+    }
+
+    /**
+     * Compte le nombre de participants à un événement
+     */
+    public int countParticipants(Long evenementId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Participation WHERE evenement_id = ? AND statut IN ('INVITE', 'CONFIRME')";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setLong(1, evenementId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Map un ResultSet vers un objet Evenement
      */
     private Evenement mapRow(ResultSet rs) throws SQLException {
