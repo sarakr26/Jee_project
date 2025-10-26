@@ -156,3 +156,6 @@ VALUES
 
 
 ALTER TABLE DemandeCreationClub ADD COLUMN logo VARCHAR(255);
+
+
+ALTER TABLE Evenement DROP FOREIGN KEY evenement_ibfk_1; ALTER TABLE Evenement DROP COLUMN federation_id;

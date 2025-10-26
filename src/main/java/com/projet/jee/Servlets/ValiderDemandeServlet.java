@@ -13,25 +13,54 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "ValiderDemandeServlet", urlPatterns = { "/valider-demande" })
+@WebServlet(name = "ValiderDemandeServlet", urlPatterns = { "/valider/demande" })
 public class ValiderDemandeServlet extends HttpServlet {
     private DemandeCreationClubDAO demandeCreationDAO = new DemandeCreationClubDAO();
     private DemandeIntegrationDAO demandeIntegrationDAO = new DemandeIntegrationDAO();
     private ClubDAO clubDAO = new ClubDAO();
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        handleRequest(req, resp);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        handleRequest(req, resp);
+    }
+
+    private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             // Vérifier l'authentification et le rôle
             Utilisateur currentUser = (Utilisateur) req.getSession().getAttribute("currentUser");
             if (currentUser == null || !"FEDERATION".equals(currentUser.getRole())) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Accès refusé");
+                resp.setContentType("application/json");
+                resp.setCharacterEncoding("UTF-8");
+                resp.getWriter().write("{\"success\":false,\"message\":\"Accès refusé - Authentification requise\"}");
                 return;
             }
 
             String type = req.getParameter("type");
-            Long demandeId = Long.parseLong(req.getParameter("demandeId"));
+            String idParam = req.getParameter("id");
             String action = req.getParameter("action");
+            
+            // Validation des paramètres
+            if (type == null || idParam == null || action == null) {
+                resp.setContentType("application/json");
+                resp.setCharacterEncoding("UTF-8");
+                resp.getWriter().write("{\"success\":false,\"message\":\"Paramètres manquants\"}");
+                return;
+            }
+            
+            Long demandeId;
+            try {
+                demandeId = Long.parseLong(idParam);
+            } catch (NumberFormatException e) {
+                resp.setContentType("application/json");
+                resp.setCharacterEncoding("UTF-8");
+                resp.getWriter().write("{\"success\":false,\"message\":\"ID de demande invalide\"}");
+                return;
+            }
 
             boolean success = false;
             String message = "";

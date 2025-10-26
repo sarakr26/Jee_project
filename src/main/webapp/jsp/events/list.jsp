@@ -164,6 +164,62 @@
             color: rgba(30, 60, 114, 0.3);
         }
         
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .btn-edit {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border-color: rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-edit:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-delete:hover {
+            background: rgba(231, 76, 60, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-inscriptions {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-inscriptions:hover {
+            background: rgba(46, 204, 113, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        
         .navigation {
             text-align: center;
             margin-top: 30px;
@@ -258,6 +314,7 @@
                                         <th>Date début</th>
                                         <th>Date fin</th>
                                         <th>Statut</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -272,6 +329,33 @@
                                                 <span class="status-badge status-${e.statut.toLowerCase()}">
                                                     ${e.statut}
                                                 </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <!-- Bouton Modifier (seulement si événement pas encore terminé) -->
+                                                    <c:if test="${e.statut != 'TERMINE'}">
+                                                        <a href="${pageContext.request.contextPath}/events?action=edit&id=${e.id}" 
+                                                           class="btn-action btn-edit" title="Modifier l'événement">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                    </c:if>
+                                                    
+                                                    <!-- Bouton Supprimer (seulement si événement pas encore démarré) -->
+                                                    <c:if test="${e.statut == 'PLANIFIE'}">
+                                                        <a href="${pageContext.request.contextPath}/events?action=delete&id=${e.id}" 
+                                                           class="btn-action btn-delete" 
+                                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')"
+                                                           title="Supprimer l'événement">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </c:if>
+                                                    
+                                                    <!-- Bouton Suivi des inscriptions -->
+                                                    <a href="${pageContext.request.contextPath}/events?action=inscriptions&id=${e.id}" 
+                                                       class="btn-action btn-inscriptions" title="Suivi des inscriptions">
+                                                        <i class="fas fa-users"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     </c:forEach>

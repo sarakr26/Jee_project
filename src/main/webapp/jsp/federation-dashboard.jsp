@@ -53,15 +53,6 @@
                     </div>
                     <div class="indicator-card">
                         <div class="indicator-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="indicator-content">
-                            <h3>${evenementsUrgents.size()}</h3>
-                            <p>Événements Urgents</p>
-                        </div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                         <div class="indicator-content">
@@ -79,10 +70,6 @@
                     <a href="${pageContext.request.contextPath}/events?action=new" class="action-btn">
                         <i class="fas fa-plus"></i>
                         <span>Créer un Événement</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/clubs" class="action-btn">
-                        <i class="fas fa-search"></i>
-                        <span>Rechercher un Club</span>
                     </a>
                     <a href="${pageContext.request.contextPath}/demandes/creation" class="action-btn">
                         <i class="fas fa-clipboard-check"></i>
@@ -173,31 +160,6 @@
                 <!-- Événements -->
                 <section class="events-section">
                     <div class="events-grid">
-                        <!-- Événements Urgents -->
-                        <div class="events-urgent">
-                            <h3><i class="fas fa-exclamation-triangle"></i> Événements Urgents</h3>
-                            <c:choose>
-                                <c:when test="${empty evenementsUrgents}">
-                                    <p class="no-data">Aucun événement urgent</p>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="event-list">
-                                        <c:forEach var="event" items="${evenementsUrgents}">
-                                            <div class="event-item urgent">
-                                                <div class="event-info">
-                                                    <h4>${event.titre}</h4>
-                                                    <p><i class="fas fa-map-marker-alt"></i> ${event.lieu}</p>
-                                                    <p><i class="fas fa-calendar"></i> <fmt:formatDate value="${event.dateDebut}" pattern="dd/MM/yyyy"/></p>
-                                                </div>
-                                                <div class="event-status urgent">
-                                                    <i class="fas fa-exclamation"></i>
-                                                </div>
-                                            </div>
-                                        </c:forEach>
-                                    </div>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
 
                         <!-- Événements Prochains -->
                         <div class="events-upcoming">
@@ -316,12 +278,12 @@
 
         function validerDemande(demandeId, action) {
             if (confirm('Êtes-vous sûr de vouloir ' + (action === 'APPROUVE' ? 'valider' : 'refuser') + ' cette demande ?')) {
-                fetch('${pageContext.request.contextPath}/valider-demande', {
+                fetch('${pageContext.request.contextPath}/valider/demande', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'type=creation&demandeId=' + demandeId + '&action=' + action
+                    body: 'type=creation&id=' + demandeId + '&action=' + action
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -341,12 +303,12 @@
 
         function validerIntegration(demandeId, action) {
             if (confirm('Êtes-vous sûr de vouloir ' + (action === 'APPROUVE' ? 'valider' : 'refuser') + ' cette intégration ?')) {
-                fetch('${pageContext.request.contextPath}/valider-demande', {
+                fetch('${pageContext.request.contextPath}/valider/demande', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'type=integration&demandeId=' + demandeId + '&action=' + action
+                    body: 'type=integration&id=' + demandeId + '&action=' + action
                 })
                 .then(response => response.json())
                 .then(data => {
