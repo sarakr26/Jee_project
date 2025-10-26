@@ -146,7 +146,6 @@ VALUES
 ('Club des Cavaliers', 'Un club compétitif', '2024-01-17', 'EN_ATTENTE', 3);
 
 -- Créer quelques demandes d'intégration en attente
-<<<<<<< HEAD
 INSERT INTO DemandeIntegration (dateDemande, statut, membre_id, club_id) 
 VALUES 
 ('2024-01-15', 'EN_ATTENTE', 4, 1),
@@ -157,7 +156,3 @@ VALUES
 
 
 ALTER TABLE DemandeCreationClub ADD COLUMN logo VARCHAR(255);
-=======
-
--- Créer quelques événements
->>>>>>> fixeven
