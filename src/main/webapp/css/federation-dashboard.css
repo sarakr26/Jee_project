@@ -405,11 +405,63 @@
 
 .no-data {
     text-align: center;
-    color: #7f8c8d;
-    font-style: italic;
     padding: 2rem;
-    background: #f8f9fa;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+}
+
+/* View Details Button */
+.btn-view-details {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-view-details:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-view-details i {
+    font-size: 0.9rem;
+}
+
+/* Primary Button Style */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
     border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.event-status {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
 }
 
 /* Amélioration de la navigation */

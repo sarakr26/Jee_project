@@ -607,7 +607,15 @@
                                         <div><i class="fas fa-info-circle"></i> <%= evt.getDescription() %></div>
                                     <% } %>
                                 </div>
-                                <span class="event-status"><%= evt.getStatut() %></span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                    <span class="event-status"><%= evt.getStatut() %></span>
+                                    <% if (club != null) { %>
+                                        <a href="<%= request.getContextPath() %>/president/select-representatives?evenementId=<%= evt.getId() %>" 
+                                           class="btn-select-rep">
+                                            <i class="fas fa-users"></i> Sélectionner Représentants
+                                        </a>
+                                    <% } %>
+                                </div>
                             </div>
                         <% } %>
                     </div>

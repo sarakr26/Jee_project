@@ -202,6 +202,11 @@
                                                             <span class="status-badge">${event.statut}</span>
                                                         </c:otherwise>
                                                     </c:choose>
+                                                    <a href="${pageContext.request.contextPath}/federation/event-details?id=${event.id}" 
+                                                       class="btn-view-details" 
+                                                       title="Voir les participants">
+                                                        <i class="fas fa-eye"></i> Voir Détails
+                                                    </a>
                                                 </div>
                                             </div>
                                         </c:forEach>
