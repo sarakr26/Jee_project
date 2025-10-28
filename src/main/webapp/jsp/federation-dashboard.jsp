@@ -122,39 +122,6 @@
                         </c:choose>
                     </div>
 
-                    <!-- Demandes d'Intégration -->
-                    <div class="request-section">
-                        <h3>Intégration de Membres (${demandesIntegrationEnAttente})</h3>
-                        <c:choose>
-                            <c:when test="${empty demandesIntegration}">
-                                <p class="no-data">Aucune demande d'intégration en attente</p>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="request-list">
-                                    <c:forEach var="demande" items="${demandesIntegration}" varStatus="status">
-                                        <c:if test="${demande.statut == 'EN_ATTENTE'}">
-                                            <div class="request-item">
-                                                <div class="request-info">
-                                                    <h4>${demande.nomMembre} ${demande.prenomMembre}</h4>
-                                                    <p><strong>Club:</strong> ${demande.nomClub}</p>
-                                                    <p><strong>Email:</strong> ${demande.emailMembre}</p>
-                                                    <p><strong>Date:</strong> <fmt:formatDate value="${demande.dateDemande}" pattern="dd/MM/yyyy"/></p>
-                                                </div>
-                                                <div class="request-actions">
-                                                    <button class="btn-approve" data-demande-id="${demande.id}" onclick="validerIntegration(this.dataset.demandeId, 'APPROUVE')">
-                                                        <i class="fas fa-check"></i> Valider
-                                                    </button>
-                                                    <button class="btn-reject" data-demande-id="${demande.id}" onclick="validerIntegration(this.dataset.demandeId, 'REFUSE')">
-                                                        <i class="fas fa-times"></i> Refuser
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </c:if>
-                                    </c:forEach>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
                 </section>
 
                 <!-- Événements -->

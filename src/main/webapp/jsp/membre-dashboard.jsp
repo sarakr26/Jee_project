@@ -457,11 +457,11 @@
                 </div>
             </div>
             <div class="header-actions">
-                <a href="<%= request.getContextPath() %>/jsp/auth/profile.jsp" class="btn btn-secondary">
+                <a href="${pageContext.request.contextPath}/profile" class="btn btn-secondary">
                     <i class="fas fa-user"></i>
                     Mon Profil
                 </a>
-                <a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger">
                     <i class="fas fa-sign-out-alt"></i>
                     Déconnexion
                 </a>

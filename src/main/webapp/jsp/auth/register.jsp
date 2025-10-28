@@ -31,10 +31,11 @@
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger">${error}</div>
                 </c:if>
-                <form method="post" action="${pageContext.request.contextPath}/register" class="form-col">
+                <form method="post" action="${pageContext.request.contextPath}/register" class="form-col" id="registerForm">
                     <input name="nom" class="form-control" placeholder="Nom" required/>
                     <input name="prenom" class="form-control" placeholder="Prénom" required/>
-                    <input name="email" type="email" class="form-control" placeholder="Email" required/>
+                    <input id="emailInput" name="email" type="email" class="form-control" placeholder="Email" required/>
+                    <div id="emailError" style="color:#b33;display:none;font-size:0.9rem;margin-top:6px">Adresse e-mail invalide</div>
                     <input name="cin" class="form-control" placeholder="CIN" required/>
                     <input name="motDePasse" type="password" class="form-control" placeholder="Mot de passe" required/>
                     <input name="motDePasse2" type="password" class="form-control" placeholder="Confirmer mot de passe" required/>
@@ -44,12 +45,55 @@
                         
                     </select>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary flex-fill" type="submit">S'inscrire</button>
+                        <button id="registerBtn" class="btn btn-primary flex-fill" type="submit">S'inscrire</button>
                         <a href="${pageContext.request.contextPath}/login" class="btn btn-primary flex-fill">Se connecter</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <script>
+        (function(){
+            var email = document.getElementById('emailInput');
+            var emailError = document.getElementById('emailError');
+            var registerBtn = document.getElementById('registerBtn');
+            var form = document.getElementById('registerForm');
+
+            function validateEmail(value){
+                if(!value) return false;
+                // simple, permissive email regex
+                var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(value);
+            }
+
+            function updateState(){
+                var ok = validateEmail(email.value.trim());
+                if(!ok){
+                    emailError.style.display = 'block';
+                    registerBtn.disabled = true;
+                } else {
+                    emailError.style.display = 'none';
+                    registerBtn.disabled = false;
+                }
+            }
+
+            if(email){
+                email.addEventListener('input', updateState);
+                // initial state
+                updateState();
+            }
+
+            // final client-side guard before submit (prevents submit when email invalid)
+            if(form){
+                form.addEventListener('submit', function(e){
+                    if(!validateEmail(email.value.trim())){
+                        e.preventDefault();
+                        emailError.style.display = 'block';
+                        email.focus();
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
