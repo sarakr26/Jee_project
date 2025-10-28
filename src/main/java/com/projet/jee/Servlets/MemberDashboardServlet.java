@@ -2,6 +2,7 @@ package com.projet.jee.Servlets;
 
 import com.projet.jee.dao.ClubDAO;
 import com.projet.jee.dao.EvenementDAO;
+import com.projet.jee.dao.NotificationDAO;
 import com.projet.jee.model.Club;
 import com.projet.jee.model.Evenement;
 import com.projet.jee.model.Utilisateur;
@@ -19,6 +20,7 @@ import java.util.List;
 public class MemberDashboardServlet extends HttpServlet {
     private ClubDAO clubDAO = new ClubDAO();
     private EvenementDAO evenementDAO = new EvenementDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -39,13 +41,24 @@ public class MemberDashboardServlet extends HttpServlet {
         }
 
         try {
-            // Récupérer tous les clubs actifs
-            List<Club> clubs = clubDAO.getAllActiveClubs();
+            // Check if member has already joined a club
+            boolean hasJoinedClub = currentUser.getClubId() != null;
+            request.setAttribute("hasJoinedClub", hasJoinedClub);
+            
+            // Only fetch clubs if the member hasn't joined a club yet
+            List<Club> clubs = null;
+            if (!hasJoinedClub) {
+                clubs = clubDAO.getAllActiveClubs();
+            }
             request.setAttribute("clubs", clubs);
             
             // Récupérer tous les événements planifiés
             List<Evenement> evenements = evenementDAO.getAllEvenementsPlanifies();
             request.setAttribute("evenements", evenements);
+            
+            // Get unread notifications count
+            int unreadCount = notificationDAO.getUnreadCount(currentUser.getId());
+            request.setAttribute("unreadCount", unreadCount);
             
             request.getRequestDispatcher("/jsp/membre-dashboard.jsp").forward(request, response);
         } catch (Exception e) {

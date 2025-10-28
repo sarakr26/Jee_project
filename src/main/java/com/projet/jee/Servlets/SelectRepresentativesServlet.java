@@ -2,6 +2,7 @@ package com.projet.jee.Servlets;
 
 import com.projet.jee.dao.ClubDAO;
 import com.projet.jee.dao.EvenementDAO;
+import com.projet.jee.dao.NotificationDAO;
 import com.projet.jee.dao.ParticipationDAO;
 import com.projet.jee.model.Club;
 import com.projet.jee.model.Evenement;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class SelectRepresentativesServlet extends HttpServlet {
     private ClubDAO clubDAO = new ClubDAO();
     private EvenementDAO evenementDAO = new EvenementDAO();
     private ParticipationDAO participationDAO = new ParticipationDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -203,6 +204,22 @@ public class SelectRepresentativesServlet extends HttpServlet {
 
                 if (!memberIds.isEmpty()) {
                     participationDAO.addParticipants(evenementId, memberIds);
+                    
+                    // Create notifications for selected members
+                    try {
+                        for (Long memberId : memberIds) {
+                            try {
+                                String message = "Vous avez été sélectionné comme représentant pour l'événement \"" + 
+                                                evenement.getTitre() + "\"";
+                                notificationDAO.createNotification(memberId, message, "MEMBRE_EVENT_ADDED");
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    
                     session.setAttribute("successMessage",
                             "Représentants sélectionnés avec succès (" + memberIds.size() + " membre(s))");
                 } else {

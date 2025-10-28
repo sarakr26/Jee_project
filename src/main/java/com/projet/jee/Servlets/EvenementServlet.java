@@ -1,7 +1,10 @@
 package com.projet.jee.Servlets;
 
 import com.projet.jee.dao.EvenementDAO;
+import com.projet.jee.dao.NotificationDAO;
+import com.projet.jee.dao.UtilisateurDAO;
 import com.projet.jee.model.Evenement;
+import com.projet.jee.model.Utilisateur;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +18,8 @@ import java.util.List;
 @WebServlet(name = "EvenementServlet", urlPatterns = {"/events"})
 public class EvenementServlet extends HttpServlet {
     private EvenementDAO dao = new EvenementDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
+    private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -141,6 +146,23 @@ public class EvenementServlet extends HttpServlet {
                 // Create new event
                 dao.create(e);
                 req.getSession().setAttribute("message", "Événement créé avec succès.");
+                
+                // Create notifications for all members about the new event
+                try {
+                    List<Utilisateur> members = utilisateurDAO.getAllMembers();
+                    String message = "Un nouvel événement a été ajouté : \"" + e.getTitre() + "\" - " + 
+                                     (e.getDateDebut() != null ? e.getDateDebut().toString() : "");
+                    
+                    for (Utilisateur member : members) {
+                        try {
+                            notificationDAO.createNotification(member.getId(), message, "EVENT_ADDED");
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
             resp.sendRedirect(req.getContextPath() + "/events");
         } catch (Exception ex) {

@@ -4,6 +4,8 @@ import com.projet.jee.model.Utilisateur;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UtilisateurDAO {
 
@@ -79,6 +81,25 @@ public class UtilisateurDAO {
 
             return stmt.executeUpdate() > 0;
         }
+    }
+
+    /**
+     * Get all members
+     */
+    public List<Utilisateur> getAllMembers() throws SQLException {
+        List<Utilisateur> members = new ArrayList<>();
+        String sql = "SELECT id, nom, prenom, email, cin, role, club_id FROM Utilisateur WHERE role = 'MEMBRE' ORDER BY nom, prenom";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Utilisateur member = mapRow(rs);
+                members.add(member);
+            }
+        }
+        return members;
     }
 
     private Utilisateur mapRow(ResultSet rs) throws SQLException {

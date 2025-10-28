@@ -2,6 +2,7 @@ package com.projet.jee.Servlets;
 
 import com.projet.jee.dao.ClubDAO;
 import com.projet.jee.dao.DemandeIntegrationDAO;
+import com.projet.jee.dao.NotificationDAO;
 import com.projet.jee.dao.UtilisateurDAO;
 import com.projet.jee.model.Club;
 import com.projet.jee.model.DemandeIntegration;
@@ -20,6 +21,7 @@ public class ValiderIntegrationServlet extends HttpServlet {
     private DemandeIntegrationDAO demandeIntegrationDAO = new DemandeIntegrationDAO();
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
     private ClubDAO clubDAO = new ClubDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -72,6 +74,18 @@ public class ValiderIntegrationServlet extends HttpServlet {
                     boolean userUpdated = utilisateurDAO.updateUserClub(demande.getMembreId(), demande.getClubId());
                     if (userUpdated) {
                         message = "Demande acceptée avec succès. Le membre a été ajouté au club.";
+                        
+                        // Create notification for the member
+                        Club clubNotif = clubDAO.getClubById(demande.getClubId());
+                        if (clubNotif != null) {
+                            String notificationMessage = "Votre demande d'intégration au club \"" + clubNotif.getNom() + "\" a été acceptée !";
+                            try {
+                                notificationDAO.createNotification(demande.getMembreId(), notificationMessage, "CLUB_ACCEPTED");
+                            } catch (Exception e) {
+                                // Log error but don't fail the main operation
+                                e.printStackTrace();
+                            }
+                        }
                     } else {
                         message = "Demande acceptée mais erreur lors de l'ajout du membre au club";
                     }
