@@ -1,11 +1,17 @@
 package com.projet.jee.dao;
 
-import com.projet.jee.model.Utilisateur;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import com.projet.jee.model.Utilisateur;
 
 public class UtilisateurDAO {
 
@@ -79,6 +85,23 @@ public class UtilisateurDAO {
             }
             stmt.setLong(2, userId);
 
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Met à jour le profil d'un utilisateur (nom et prénom)
+     */
+    public boolean updateProfile(Utilisateur user) throws SQLException {
+        String sql = "UPDATE Utilisateur SET nom = ?, prenom = ? WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, user.getNom());
+            stmt.setString(2, user.getPrenom());
+            stmt.setLong(3, user.getId());
+            
             return stmt.executeUpdate() > 0;
         }
     }
