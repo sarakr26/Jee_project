@@ -610,33 +610,6 @@
     
     <script src="${pageContext.request.contextPath}/js/app.js"></script>
     <script>
-        // Alternative event listeners au cas où onclick ne fonctionne pas
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== DOM loaded, setting up event listeners ===');
-            
-            // Event listeners pour les boutons d'action
-            document.addEventListener('click', function(e) {
-                console.log('Click detected on:', e.target);
-                
-                if (e.target.closest('.btn-approve')) {
-                    e.preventDefault();
-                    const button = e.target.closest('.btn-approve');
-                    const demandeId = button.getAttribute('data-demande-id');
-                    console.log('=== Approve button clicked via event listener ===');
-                    console.log('demandeId:', demandeId);
-                    alert('Event listener: Approve clicked! ID: ' + demandeId);
-                    handleDemandeAction(demandeId, 'APPROUVE', button);
-                } else if (e.target.closest('.btn-reject')) {
-                    e.preventDefault();
-                    const button = e.target.closest('.btn-reject');
-                    const demandeId = button.getAttribute('data-demande-id');
-                    console.log('=== Reject button clicked via event listener ===');
-                    console.log('demandeId:', demandeId);
-                    alert('Event listener: Reject clicked! ID: ' + demandeId);
-                    handleDemandeAction(demandeId, 'REFUSE', button);
-                }
-            });
-        });
         function showDemandeDetails(demandeId) {
             // Fonction pour afficher les détails d'une demande
             // Peut être implémentée plus tard avec une modal ou une page dédiée
@@ -645,19 +618,12 @@
 
 
         function handleDemandeAction(demandeId, action, buttonElement) {
-            console.log('=== handleDemandeAction called ===');
-            console.log('demandeId:', demandeId);
-            console.log('action:', action);
-            
             const actionText = action === 'APPROUVE' ? 'approuver' : 'refuser';
             const confirmMessage = 'Êtes-vous sûr de vouloir ' + actionText + ' cette demande ?';
             
             if (!confirm(confirmMessage)) {
-                console.log('Action cancelled by user');
                 return;
             }
-            
-            console.log('Proceeding with action:', action);
             
             // Désactiver le bouton cliqué
             buttonElement.disabled = true;
@@ -667,23 +633,18 @@
             const contextPath = '${pageContext.request.contextPath}';
             const url = contextPath + '/valider/demande?type=creation&action=' + action + '&id=' + demandeId;
             
-            console.log('Making request to:', url);
-            
             fetch(url, {
                 method: 'GET'
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     throw new Error('HTTP error! status: ' + response.status);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
                 if (data.success) {
                     // Recharger la page pour voir les changements
-                    alert('Succès: ' + data.message);
                     location.reload();
                 } else {
                     alert('Erreur: ' + data.message);
@@ -693,8 +654,7 @@
                 }
             })
             .catch(error => {
-                console.error('Erreur:', error);
-                alert('Erreur de communication avec le serveur: ' + error.message);
+                alert('Erreur de communication avec le serveur');
                 // Réactiver le bouton
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = action === 'APPROUVE' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';

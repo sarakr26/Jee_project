@@ -33,15 +33,15 @@
             <section class="key-indicators">
                 <h2><i class="fas fa-chart-line"></i> Indicateurs Clés</h2>
                 <div class="indicators-grid">
-                    <div class="indicator-card">
+                    <a href="${pageContext.request.contextPath}/federation/clubs" class="indicator-card" style="text-decoration: none; color: inherit; cursor: pointer;">
                         <div class="indicator-icon">
                             <i class="fas fa-chess-pawn"></i>
                         </div>
                         <div class="indicator-content">
                             <h3>${nombreClubsActifs}</h3>
-                            <p>Clubs Actifs</p>
+                            <p>Clubs Actifs <i class="fas fa-external-link-alt" style="font-size: 12px;"></i></p>
                         </div>
-                    </div>
+                    </a>
                     <div class="indicator-card">
                         <div class="indicator-icon">
                             <i class="fas fa-clock"></i>
@@ -51,15 +51,15 @@
                             <p>Demandes en Attente</p>
                         </div>
                     </div>
-                    <div class="indicator-card">
+                    <a href="${pageContext.request.contextPath}/events" class="indicator-card" style="text-decoration: none; color: inherit; cursor: pointer;">
                         <div class="indicator-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                         <div class="indicator-content">
                             <h3>${evenementsProchains.size()}</h3>
-                            <p>Événements Prochains</p>
+                            <p>Événements <i class="fas fa-external-link-alt" style="font-size: 12px;"></i></p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </section>
 
@@ -163,7 +163,12 @@
 
                         <!-- Événements Prochains -->
                         <div class="events-upcoming">
-                            <h3><i class="fas fa-calendar-alt"></i> Événements Prochains</h3>
+                            <h3>
+                                <a href="${pageContext.request.contextPath}/events" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                                    <i class="fas fa-calendar-alt"></i> Événements
+                                    <i class="fas fa-external-link-alt" style="font-size: 0.7em; color: #3498db;"></i>
+                                </a>
+                            </h3>
                             <c:choose>
                                 <c:when test="${empty evenementsProchains}">
                                     <p class="no-data">Aucun événement prochain</p>

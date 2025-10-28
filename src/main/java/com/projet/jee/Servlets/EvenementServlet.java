@@ -79,10 +79,10 @@ public class EvenementServlet extends HttpServlet {
                 return;
             }
             
-            // Default: show events list
+            // Default: show events dashboard
             List<Evenement> list = dao.findAll();
             req.setAttribute("events", list);
-            req.getRequestDispatcher("/jsp/events/list.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/events/dashboard.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
         }

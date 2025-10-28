@@ -70,22 +70,28 @@ public class ValiderDemandeServlet extends HttpServlet {
                     // Récupérer les détails de la demande avant de la valider
                     DemandeCreationClub demande = demandeCreationDAO.findById(demandeId);
                     if (demande != null) {
-                        // Valider la demande
-                        success = demandeCreationDAO.validerDemande(demandeId);
-                        if (success) {
-                            // Créer le club dans la table Club
+                        // Vérifier si le président a déjà un club
+                        if (clubDAO.getClubByPresidentId(demande.getPresidentId()) != null) {
+                            message = "Erreur: Ce président est déjà président d'un club existant";
+                            success = false;
+                        } else {
+                            // Créer le club d'abord dans la table Club
                             boolean clubCreated = clubDAO.createClubFromDemande(
                                     demande.getNomClub(),
                                     demande.getDescription(),
                                     demande.getLogo(),
                                     demande.getPresidentId());
                             if (clubCreated) {
-                                message = "Demande de création validée avec succès et club créé";
+                                // Puis valider la demande
+                                success = demandeCreationDAO.validerDemande(demandeId);
+                                if (success) {
+                                    message = "Demande de création validée avec succès et club créé";
+                                } else {
+                                    message = "Club créé mais erreur lors de la validation de la demande";
+                                }
                             } else {
-                                message = "Demande validée mais erreur lors de la création du club";
+                                message = "Erreur lors de la création du club";
                             }
-                        } else {
-                            message = "Erreur lors de la validation";
                         }
                     } else {
                         message = "Demande introuvable";
