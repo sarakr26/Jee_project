@@ -43,8 +43,8 @@ public class PresidentDashboardServlet extends HttpServlet {
         }
 
         try {
-            // Récupérer tous les événements planifiés
-            List<Evenement> evenements = evenementDAO.getAllEvenementsPlanifies();
+            // Récupérer tous les événements avec les statuts mis à jour
+            List<Evenement> evenements = evenementDAO.getAllEventsWithUpdatedStatus();
             request.setAttribute("evenements", evenements);
 
             // Récupérer les demandes du président
