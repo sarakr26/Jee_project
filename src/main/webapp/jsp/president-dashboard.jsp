@@ -609,7 +609,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                                     <span class="event-status"><%= evt.getStatut() %></span>
-                                    <% if (club != null) { %>
+                                    <% if (club != null && !"TERMINE".equals(evt.getStatut())) { %>
                                         <a href="<%= request.getContextPath() %>/president/select-representatives?evenementId=<%= evt.getId() %>" 
                                            class="btn-select-rep">
                                             <i class="fas fa-users"></i> Sélectionner Représentants

@@ -350,11 +350,21 @@
                                                         </a>
                                                     </c:if>
                                                     
-                                                    <!-- Bouton Suivi des inscriptions -->
-                                                    <a href="${pageContext.request.contextPath}/events?action=inscriptions&id=${e.id}" 
-                                                       class="btn-action btn-inscriptions" title="Suivi des inscriptions">
-                                                        <i class="fas fa-users"></i>
-                                                    </a>
+                                                    <!-- Bouton Suivi des inscriptions / Podium -->
+                                                    <c:choose>
+                                                        <c:when test="${e.statut == 'TERMINE'}">
+                                                            <a href="${pageContext.request.contextPath}/federation/podium?evenementId=${e.id}" 
+                                                               class="btn-action btn-inscriptions" title="Définir le Podium">
+                                                                <i class="fas fa-trophy"></i>
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="${pageContext.request.contextPath}/events?action=inscriptions&id=${e.id}" 
+                                                               class="btn-action btn-inscriptions" title="Suivi des inscriptions">
+                                                                <i class="fas fa-users"></i>
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                             </td>
                                         </tr>

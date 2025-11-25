@@ -37,3 +37,14 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_SCHEMA = 'chess_club_db' 
     AND TABLE_NAME = 'evenement'
     AND COLUMN_NAME IN ('premier_id', 'deuxieme_id', 'troisieme_id');
+
+    CREATE TABLE IF NOT EXISTS Notification (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  message TEXT NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  dateCreation DATE NOT NULL,
+  lu BOOLEAN DEFAULT FALSE,
+  membre_id BIGINT NOT NULL,
+  FOREIGN KEY (membre_id) REFERENCES Utilisateur(id) ON DELETE CASCADE,
+  INDEX idx_membre_date (membre_id, dateCreation)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

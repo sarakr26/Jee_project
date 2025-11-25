@@ -189,6 +189,64 @@ public class EvenementDAO {
      * Récupère les participants inscrits à un événement
      * (Cette méthode nécessite la table Participation)
      */
+    /**
+     * Updates the status of an event
+     */
+    public void updateEventStatus(Evenement event) throws SQLException {
+        String sql = "UPDATE Evenement SET statut = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, event.getStatut());
+            stmt.setLong(2, event.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Checks and updates the status of all events based on their end date
+     */
+    public void checkAndUpdateEventStatus() throws SQLException {
+        try {
+            String sql = "SELECT id, dateFin, statut FROM Evenement WHERE statut != 'TERMINE'";
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+               
+                java.util.Date currentDate = new java.util.Date();
+                
+                while (rs.next()) {
+                    java.sql.Date endDate = rs.getDate("dateFin");
+                    
+                    // If current date is after event end date, mark as TERMINE
+                    if (endDate != null && currentDate.after(new java.util.Date(endDate.getTime()))) {
+                        Evenement event = new Evenement();
+                        event.setId(rs.getLong("id"));
+                        event.setStatut("TERMINE");
+                        updateEventStatus(event);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating event statuses: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Gets all events with updated statuses
+     */
+    public List<Evenement> getAllEventsWithUpdatedStatus() {
+        try {
+            // First update statuses
+            checkAndUpdateEventStatus();
+            // Then return all events
+            return getAllEvenements();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>(); // Return empty list in case of error
+        }
+    }
+
     public List<String> getParticipants(Long evenementId) throws SQLException {
         List<String> participants = new ArrayList<>();
         String sql = "SELECT u.nom, u.prenom, c.nom as club_nom " +
