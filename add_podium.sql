@@ -37,3 +37,5 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_SCHEMA = 'chess_club_db' 
     AND TABLE_NAME = 'evenement'
     AND COLUMN_NAME IN ('premier_id', 'deuxieme_id', 'troisieme_id');
+
+    ALTER TABLE DemandeCreationClub ADD COLUMN logo VARCHAR(255);

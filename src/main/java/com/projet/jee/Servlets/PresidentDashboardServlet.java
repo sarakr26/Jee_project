@@ -3,11 +3,11 @@ package com.projet.jee.Servlets;
 import com.projet.jee.dao.ClubDAO;
 import com.projet.jee.dao.EvenementDAO;
 import com.projet.jee.dao.DemandeCreationClubDAO;
+import com.projet.jee.dao.NotificationDAO;
 import com.projet.jee.model.Club;
 import com.projet.jee.model.Evenement;
 import com.projet.jee.model.DemandeCreationClub;
 import com.projet.jee.model.Utilisateur;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +23,7 @@ public class PresidentDashboardServlet extends HttpServlet {
     private EvenementDAO evenementDAO = new EvenementDAO();
     private DemandeCreationClubDAO demandeDAO = new DemandeCreationClubDAO();
     private ClubDAO clubDAO = new ClubDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,6 +61,10 @@ public class PresidentDashboardServlet extends HttpServlet {
                 List<Utilisateur> members = clubDAO.getMembersByClubId(club.getId());
                 request.setAttribute("memberCount", members.size());
             }
+            
+            // Get unread notifications count for the president
+            int unreadCount = notificationDAO.getUnreadCount(currentUser.getId());
+            request.setAttribute("unreadCount", unreadCount);
 
             request.getRequestDispatcher("/jsp/president-dashboard.jsp").forward(request, response);
         } catch (Exception e) {

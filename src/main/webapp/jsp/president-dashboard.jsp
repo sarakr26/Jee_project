@@ -15,6 +15,8 @@
     Club club = (Club) request.getAttribute("club");
     Integer memberCount = (Integer) request.getAttribute("memberCount");
     if (memberCount == null) memberCount = 0;
+    Integer unreadCount = (Integer) request.getAttribute("unreadCount");
+    if (unreadCount == null) unreadCount = 0;
 %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -481,6 +483,186 @@
             background: #f0f0f0;
             color: #667eea;
         }
+
+        /* Notification styles */
+        .notification-btn {
+            position: relative;
+            background: #FF6B6B;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .notification-btn:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #FF4444;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .notification-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .notification-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+
+        .notification-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .notification-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .notification-body {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .notification-item:hover {
+            background: #e9ecef;
+        }
+
+        .notification-item.unread {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+        }
+
+        .notification-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .notification-item-type {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .notification-item-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .notification-item-message {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .close-notification {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .close-notification:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mark-all-read-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .mark-all-read-btn:hover {
+            background: #45a049;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .no-notifications i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -494,12 +676,23 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="notification-btn" onclick="openNotifications()">
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                    <% if (unreadCount > 0) { %>
+                        <span class="notification-badge"><%= unreadCount %></span>
+                    <% } %>
+                </button>
                 <% if (club == null) { %>
                     <button class="btn btn-primary" onclick="openModal()">
                         <i class="fas fa-plus-circle"></i>
                         Créer un Club
                     </button>
                 <% } %>
+                <a href="<%= request.getContextPath() %>/messages?action=inbox" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i>
+                    Messages
+                </a>
                 <a href="<%= request.getContextPath() %>/jsp/auth/profile.jsp" class="btn btn-secondary">
                     <i class="fas fa-user"></i>
                     Mon Profil
@@ -508,6 +701,29 @@
                     <i class="fas fa-sign-out-alt"></i>
                     Déconnexion
                 </a>
+            </div>
+        </div>
+
+        <!-- Notification Modal -->
+        <div id="notificationModal" class="notification-modal">
+            <div class="notification-modal-content">
+                <div class="notification-header">
+                    <h2><i class="fas fa-bell"></i> Mes Notifications</h2>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="mark-all-read-btn" onclick="markAllAsRead()">
+                            <i class="fas fa-check-double"></i> Tout marquer comme lu
+                        </button>
+                        <button class="close-notification" onclick="closeNotifications()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="notification-body" id="notificationList">
+                    <div class="no-notifications">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>Chargement des notifications...</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -556,16 +772,7 @@
                             <div class="stat-value"><%= memberCount %></div>
                             <div class="stat-label">Membres</div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-trophy"></i>
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">Tournois</div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-calendar-check"></i>
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">Événements</div>
-                        </div>
+                        
                         <div class="stat-card">
                             <i class="fas fa-check-circle"></i>
                             <div class="stat-value"><%= club.getStatut() %></div>
@@ -578,10 +785,14 @@
                             <i class="fas fa-users"></i>
                             Gérer les Membres
                         </a>
-                        <button class="btn btn-white" onclick="alert('Fonctionnalité en cours de développement')">
-                            <i class="fas fa-cog"></i>
-                            Paramètres du Club
-                        </button>
+                        <a href="<%= request.getContextPath() %>/planning" class="btn btn-white">
+                            <i class="fas fa-calendar-alt"></i>
+                            Planning des Entraînements
+                        </a>
+                        <a href="<%= request.getContextPath() %>/maps" class="btn btn-white">
+                            <i class="fas fa-map-marked-alt"></i>
+                            Voir sur la Carte
+                        </a>
                     </div>
                 </div>
             <% } %>
@@ -593,6 +804,14 @@
                         <i class="fas fa-calendar-alt"></i>
                         Événements de la Fédération
                     </h2>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="<%= request.getContextPath() %>/events?action=calendar" class="btn btn-secondary">
+                            <i class="fas fa-calendar-alt"></i> Vue Calendrier
+                        </a>
+                        <a href="<%= request.getContextPath() %>/maps?view=events" class="btn btn-secondary">
+                            <i class="fas fa-map-marked-alt"></i> Voir sur la Carte
+                        </a>
+                    </div>
                 </div>
 
                 <% if (evenements != null && !evenements.isEmpty()) { %>
@@ -760,6 +979,69 @@
             if (event.target == modal) {
                 closeModal();
             }
+            
+            const notificationModal = document.getElementById('notificationModal');
+            if (event.target == notificationModal) {
+                closeNotifications();
+            }
+        }
+
+        // Notification functions
+        function openNotifications() {
+            document.getElementById('notificationModal').style.display = 'block';
+            loadNotifications();
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationModal').style.display = 'none';
+        }
+
+        function loadNotifications() {
+            var contextPath = '<%= request.getContextPath() %>';
+            fetch(contextPath + '/president/notifications')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationList = document.getElementById('notificationList');
+                    if (data.length === 0) {
+                        notificationList.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>Aucune notification pour le moment</p></div>';
+                    } else {
+                        let html = '';
+                        data.forEach(notif => {
+                            html += '<div class="notification-item ' + (notif.lu ? '' : 'unread') + '">' +
+                                '<div class="notification-item-header">' +
+                                '<span class="notification-item-type">' + getTypeLabel(notif.type) + '</span>' +
+                                '<span class="notification-item-date">' + notif.dateCreation + '</span>' +
+                                '</div>' +
+                                '<div class="notification-item-message">' + notif.message + '</div>' +
+                                '</div>';
+                        });
+                        notificationList.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                });
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                'EVENT_ADDED': 'Nouvel Événement',
+                'CLUB_APPROVED': 'Club Approuvé'
+            };
+            return labels[type] || type;
+        }
+
+        function markAllAsRead() {
+            var contextPath = '<%= request.getContextPath() %>';
+            fetch(contextPath + '/president/notifications?action=markAllRead', {
+                method: 'GET'
+            })
+                .then(() => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error marking notifications as read:', error);
+                });
         }
 
         function confirmerSuppression(button) {

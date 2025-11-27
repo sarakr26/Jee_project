@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import java.sql.Date;
-
-@WebServlet(name = "NotificationServlet", urlPatterns = {"/membre/notifications"})
+@WebServlet(name = "NotificationServlet", urlPatterns = {"/membre/notifications", "/president/notifications"})
 public class NotificationServlet extends HttpServlet {
     private NotificationDAO notificationDAO = new NotificationDAO();
 
@@ -32,8 +30,8 @@ public class NotificationServlet extends HttpServlet {
 
         Utilisateur currentUser = (Utilisateur) session.getAttribute("currentUser");
         
-        // Only members can access notifications
-        if (!"MEMBRE".equals(currentUser.getRole())) {
+        // Only members and presidents can access notifications
+        if (!"MEMBRE".equals(currentUser.getRole()) && !"PRESIDENT".equals(currentUser.getRole())) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

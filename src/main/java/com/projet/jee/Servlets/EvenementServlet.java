@@ -84,6 +84,52 @@ public class EvenementServlet extends HttpServlet {
                 return;
             }
             
+            if ("calendar".equals(action)) {
+                // Show calendar view
+                String yearParam = req.getParameter("year");
+                String monthParam = req.getParameter("month");
+                
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                int year = yearParam != null ? Integer.parseInt(yearParam) : cal.get(java.util.Calendar.YEAR);
+                int month = monthParam != null ? Integer.parseInt(monthParam) : (cal.get(java.util.Calendar.MONTH) + 1);
+                
+                // Get events for the selected month based on user role
+                List<Evenement> monthEvents;
+                List<Evenement> allEvents;
+                
+                javax.servlet.http.HttpSession session = req.getSession(false);
+                com.projet.jee.model.Utilisateur currentUser = null;
+                if (session != null) {
+                    currentUser = (com.projet.jee.model.Utilisateur) session.getAttribute("currentUser");
+                }
+                
+                // For FEDERATION: show all events
+                // For PRESIDENT and MEMBRE: show only planned events
+                if (currentUser != null && "FEDERATION".equals(currentUser.getRole())) {
+                    monthEvents = dao.getEvenementsByMonth(year, month);
+                    allEvents = dao.findAll();
+                } else {
+                    // Filter only planned events
+                    List<Evenement> allMonthEvents = dao.getEvenementsByMonth(year, month);
+                    monthEvents = new java.util.ArrayList<Evenement>();
+                    for (Evenement e : allMonthEvents) {
+                        if ("PLANIFIE".equals(e.getStatut())) {
+                            monthEvents.add(e);
+                        }
+                    }
+                    // For popup, get all planned events
+                    List<Evenement> allPlannedEvents = dao.getAllEvenementsPlanifies();
+                    allEvents = allPlannedEvents;
+                }
+                
+                req.setAttribute("events", monthEvents);
+                req.setAttribute("allEvents", allEvents);
+                req.setAttribute("currentYear", year);
+                req.setAttribute("currentMonth", month);
+                req.getRequestDispatcher("/jsp/events/calendar.jsp").forward(req, resp);
+                return;
+            }
+            
             // Default: show events list
             List<Evenement> list = dao.findAll();
             req.setAttribute("events", list);
@@ -147,15 +193,26 @@ public class EvenementServlet extends HttpServlet {
                 dao.create(e);
                 req.getSession().setAttribute("message", "Événement créé avec succès.");
                 
-                // Create notifications for all members about the new event
+                // Create notifications for all members and presidents about the new event
                 try {
                     List<Utilisateur> members = utilisateurDAO.getAllMembers();
                     String message = "Un nouvel événement a été ajouté : \"" + e.getTitre() + "\" - " + 
                                      (e.getDateDebut() != null ? e.getDateDebut().toString() : "");
                     
+                    // Notify all members
                     for (Utilisateur member : members) {
                         try {
                             notificationDAO.createNotification(member.getId(), message, "EVENT_ADDED");
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    
+                    // Also notify all presidents
+                    List<Utilisateur> presidents = utilisateurDAO.getAllPresidents();
+                    for (Utilisateur president : presidents) {
+                        try {
+                            notificationDAO.createNotification(president.getId(), message, "EVENT_ADDED");
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

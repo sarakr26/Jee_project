@@ -3,6 +3,7 @@ package com.projet.jee.Servlets;
 import com.projet.jee.dao.ClubDAO;
 import com.projet.jee.dao.DemandeCreationClubDAO;
 import com.projet.jee.dao.DemandeIntegrationDAO;
+import com.projet.jee.dao.NotificationDAO;
 import com.projet.jee.model.DemandeCreationClub;
 import com.projet.jee.model.Utilisateur;
 
@@ -18,6 +19,7 @@ public class ValiderDemandeServlet extends HttpServlet {
     private DemandeCreationClubDAO demandeCreationDAO = new DemandeCreationClubDAO();
     private DemandeIntegrationDAO demandeIntegrationDAO = new DemandeIntegrationDAO();
     private ClubDAO clubDAO = new ClubDAO();
+    private NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -81,6 +83,14 @@ public class ValiderDemandeServlet extends HttpServlet {
                                     demande.getPresidentId());
                             if (clubCreated) {
                                 message = "Demande de création validée avec succès et club créé";
+                                
+                                // Créer une notification pour le président
+                                String notificationMessage = "Votre demande de création du club \"" + demande.getNomClub() + "\" a été approuvée par la fédération !";
+                                try {
+                                    notificationDAO.createNotification(demande.getPresidentId(), notificationMessage, "CLUB_APPROVED");
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
                             } else {
                                 message = "Demande validée mais erreur lors de la création du club";
                             }

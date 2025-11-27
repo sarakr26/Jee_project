@@ -91,7 +91,6 @@ CREATE TABLE Planning (
   FOREIGN KEY (club_id) REFERENCES Club(id) ON DELETE CASCADE
 );
 
--- -----------------------------------------------------
 -- Table Activite
 -- Détaille les activités (entraînements, réunions) d'un planning.
 -- -----------------------------------------------------
@@ -103,6 +102,34 @@ CREATE TABLE Activite (
   dateFin DATETIME NOT NULL,
   planning_id BIGINT NOT NULL,
   FOREIGN KEY (planning_id) REFERENCES Planning(id) ON DELETE CASCADE
+);
+
+-- -----------------------------------------------------
+-- Table Message
+-- Permet l'envoi de messages internes (groupe) aux membres d'un club.
+-- -----------------------------------------------------
+CREATE TABLE Message (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  expediteur_id BIGINT NOT NULL,
+  club_id BIGINT NOT NULL,
+  sujet VARCHAR(255) NOT NULL,
+  contenu TEXT NOT NULL,
+  date_envoi DATETIME NOT NULL,
+  FOREIGN KEY (expediteur_id) REFERENCES Utilisateur(id) ON DELETE CASCADE,
+  FOREIGN KEY (club_id) REFERENCES Club(id) ON DELETE CASCADE
+);
+
+-- -----------------------------------------------------
+-- Table MessageDestinataire
+-- Associe un message à chaque membre destinataire, avec statut de lecture.
+-- -----------------------------------------------------
+CREATE TABLE MessageDestinataire (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  message_id BIGINT NOT NULL,
+  destinataire_id BIGINT NOT NULL,
+  lu BOOLEAN NOT NULL DEFAULT FALSE,
+  FOREIGN KEY (message_id) REFERENCES Message(id) ON DELETE CASCADE,
+  FOREIGN KEY (destinataire_id) REFERENCES Utilisateur(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS DemandeCreationClub (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,

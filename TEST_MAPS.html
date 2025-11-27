@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Google Maps - Clé API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+            border: 2px solid #333;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h2>Test de la Clé API Google Maps</h2>
+        <p><strong>Clé API:</strong> AIzaSyA1i-VRRVznVaxfS6xaLkHFXmQFKWjLqsE</p>
+        <p>Si la carte s'affiche ci-dessous, votre clé API fonctionne !</p>
+    </div>
+    
+    <div id="map"></div>
+
+    <script>
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyA1i-VRRVznVaxfS6xaLkHFXmQFKWjLqsE';
+        
+        function initMap() {
+            // Coordonnées du Maroc (centre)
+            const morocco = { lat: 31.7917, lng: -7.0926 };
+            
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 6,
+                center: morocco
+            });
+            
+            // Ajouter un marqueur de test
+            new google.maps.Marker({
+                position: morocco,
+                map: map,
+                title: 'Test - Centre du Maroc'
+            });
+            
+            console.log('✅ Carte Google Maps chargée avec succès !');
+        }
+        
+        // Gestion d'erreur
+        window.gm_authFailure = function() {
+            document.getElementById('map').innerHTML = 
+                '<div style="padding: 20px; text-align: center; color: red;">' +
+                '<h2>❌ Erreur: Clé API invalide ou non autorisée</h2>' +
+                '<p>Vérifiez votre clé API dans Google Cloud Console</p>' +
+                '</div>';
+        };
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1i-VRRVznVaxfS6xaLkHFXmQFKWjLqsE&callback=initMap" async defer></script>
+</body>
+</html>
+
+

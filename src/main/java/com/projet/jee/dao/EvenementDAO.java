@@ -153,6 +153,31 @@ public class EvenementDAO {
     }
 
     /**
+     * Récupère les événements pour un mois donné
+     */
+    public List<Evenement> getEvenementsByMonth(int year, int month) throws SQLException {
+        List<Evenement> evenements = new ArrayList<>();
+        String sql = "SELECT id, titre, description, lieu, dateDebut, dateFin, statut, premier_id, deuxieme_id, troisieme_id " +
+                     "FROM Evenement " +
+                     "WHERE YEAR(dateDebut) = ? AND MONTH(dateDebut) = ? " +
+                     "ORDER BY dateDebut ASC";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    evenements.add(mapRow(rs));
+                }
+            }
+        }
+        return evenements;
+    }
+
+    /**
      * Met à jour un événement existant
      */
     public Evenement update(Evenement e) throws SQLException {

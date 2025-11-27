@@ -38,7 +38,9 @@
         .events-actions {
             display: flex;
             justify-content: center;
+            gap: 15px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         
         .btn-new-event {
@@ -59,6 +61,26 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
             background: linear-gradient(135deg, #2a5298 0%, #3b5998 100%);
+        }
+
+        .btn-calendar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-calendar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
         }
         
         .message {
@@ -289,6 +311,10 @@
                 
                 <!-- Actions -->
                 <div class="events-actions">
+                    <a href="${pageContext.request.contextPath}/events?action=calendar" class="btn-calendar">
+                        <i class="fas fa-calendar-alt"></i>
+                        Vue Calendrier
+                    </a>
                     <a href="${pageContext.request.contextPath}/events?action=new" class="btn-new-event">
                         <i class="fas fa-plus"></i>
                         Nouvel événement

@@ -640,7 +640,7 @@
     </style>
 </head>
 <body>
-    <div class="member-dashboard">
+        <div class="member-dashboard">
         <div class="dashboard-header">
                 <div class="header-title">
                 <i class="fas fa-chess-king"></i>
@@ -650,6 +650,16 @@
                 </div>
             </div>
             <div class="header-actions">
+                <% if (hasJoinedClub != null && hasJoinedClub) { %>
+                <a href="<%= request.getContextPath() %>/planning" class="btn btn-primary">
+                    <i class="fas fa-calendar-alt"></i>
+                    Planning
+                </a>
+                <% } %>
+                <a href="<%= request.getContextPath() %>/messages?action=inbox" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i>
+                    Messages
+                </a>
                 <button class="notification-btn" onclick="openNotifications()">
                     <i class="fas fa-bell"></i>
                     Notifications
@@ -718,7 +728,11 @@
             <div style="background: white; border-radius: 15px; padding: 30px; margin-bottom: 30px; text-align: center; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);">
                 <i class="fas fa-check-circle" style="font-size: 4rem; color: #4CAF50; margin-bottom: 20px;"></i>
                 <h2 style="color: #1e3c72; margin-bottom: 15px;">Vous êtes déjà membre d'un club !</h2>
-                <p style="color: #666; font-size: 1.1rem;">Vous avez rejoint un club avec succès. Consultez les événements planifiés ci-dessous.</p>
+                <p style="color: #666; font-size: 1.1rem; margin-bottom: 20px;">Vous avez rejoint un club avec succès. Consultez les événements planifiés ci-dessous.</p>
+                <a href="<%= request.getContextPath() %>/planning" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; background: #4CAF50; color: white;">
+                    <i class="fas fa-calendar-alt"></i>
+                    Voir le Planning des Entraînements
+                </a>
             </div>
         <% } else { %>
             <!-- Boutons de basculement -->
@@ -736,10 +750,15 @@
 
         <!-- Section Clubs -->
         <div id="clubs-section" class="clubs-container section-visible"<% if (hasJoinedClub != null && hasJoinedClub) { %> style="display: none;"<% } %>>
-            <h2 class="section-title">
-                <i class="fas fa-chess-knight"></i>
-                Clubs d'Échecs Disponibles
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">
+                    <i class="fas fa-chess-knight"></i>
+                    Clubs d'Échecs Disponibles
+                </h2>
+                <a href="<%= request.getContextPath() %>/maps?view=clubs" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt"></i> Voir sur la Carte
+                </a>
+            </div>
 
             <% if (clubs != null && !clubs.isEmpty()) { %>
                 <div class="clubs-grid">
@@ -787,10 +806,20 @@
 
         <!-- Section Événements -->
         <div id="events-section" class="events-container<% if (hasJoinedClub != null && hasJoinedClub) { %> section-visible<% } else { %> section-hidden<% } %>">
-            <h2 class="section-title">
-                <i class="fas fa-calendar-alt"></i>
-                Événements Planifiés
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">
+                    <i class="fas fa-calendar-alt"></i>
+                    Événements Planifiés
+                </h2>
+                <div style="display: flex; gap: 10px;">
+                    <a href="<%= request.getContextPath() %>/events?action=calendar" class="btn btn-primary">
+                        <i class="fas fa-calendar-alt"></i> Vue Calendrier
+                    </a>
+                    <a href="<%= request.getContextPath() %>/maps?view=events" class="btn btn-primary">
+                        <i class="fas fa-map-marked-alt"></i> Voir sur la Carte
+                    </a>
+                </div>
+            </div>
 
             <% if (evenements != null && !evenements.isEmpty()) { %>
                 <div class="events-grid">

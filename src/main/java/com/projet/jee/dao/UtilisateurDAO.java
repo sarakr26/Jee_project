@@ -102,6 +102,25 @@ public class UtilisateurDAO {
         return members;
     }
 
+    /**
+     * Get all presidents
+     */
+    public List<Utilisateur> getAllPresidents() throws SQLException {
+        List<Utilisateur> presidents = new ArrayList<>();
+        String sql = "SELECT id, nom, prenom, email, cin, role, club_id FROM Utilisateur WHERE role = 'PRESIDENT' ORDER BY nom, prenom";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Utilisateur president = mapRow(rs);
+                presidents.add(president);
+            }
+        }
+        return presidents;
+    }
+
     private Utilisateur mapRow(ResultSet rs) throws SQLException {
         Utilisateur u = new Utilisateur();
         u.setId(rs.getLong("id"));

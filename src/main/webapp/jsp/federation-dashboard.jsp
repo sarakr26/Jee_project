@@ -79,6 +79,18 @@
                         <i class="fas fa-list"></i>
                         <span>Gérer Événements</span>
                     </a>
+                    <a href="${pageContext.request.contextPath}/events?action=calendar" class="action-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendrier</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/maps" class="action-btn">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Voir sur la Carte</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/messages?action=inbox" class="action-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span>Messages</span>
+                    </a>
                 </div>
             </section>
 
