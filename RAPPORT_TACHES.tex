@@ -1,0 +1,521 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+\lhead{Rapport de Tâches - Projet Chess Club Management}
+
+% Configuration pour les listings de code
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false
+}
+
+\title{\textbf{Rapport de Tâches Réalisées} \\ 
+       \large Plateforme Web de Gestion de Clubs d'Échecs - Java/JEE}
+\author{Étudiant}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Ce rapport présente les tâches réalisées dans le cadre du projet de développement d'une plateforme web de gestion de clubs d'échecs. L'application a été développée en utilisant les technologies Java/JEE avec des Servlets, JSP, et MySQL comme base de données.
+
+\section{Architecture Générale}
+
+L'application suit une architecture MVC (Model-View-Controller) avec les composants suivants :
+
+\begin{itemize}
+    \item \textbf{Modèle} : Classes Java dans le package \texttt{com.projet.jee.model}
+    \item \textbf{Vue} : Pages JSP dans \texttt{src/main/webapp/jsp/}
+    \item \textbf{Contrôleur} : Servlets dans le package \texttt{com.projet.jee.Servlets}
+    \item \textbf{DAO} : Couche d'accès aux données dans \texttt{com.projet.jee.dao}
+\end{itemize}
+
+
+
+% Nouvelle tâche : Module Maps (Clubs)
+\section{Tâche 1 : Module Maps (Événements)}
+
+\subsection{Description}
+Développement d'un module de visualisation géographique permettant d'afficher l'ensemble des événements (tournois, rencontres, réunions, etc.) sur une carte interactive (Google Maps). Ce module permet à tous les utilisateurs de localiser rapidement les événements à venir ou passés, d'obtenir des informations détaillées (titre, description, lieu, date, club organisateur, etc.) et d'interagir avec la carte (zoom, filtres, recherche par ville ou type d'événement). L'intégration de Google Maps facilite la planification, la participation et la gestion logistique des événements.
+
+\subsection{Composants Réalisés}
+\begin{itemize}
+    \item Intégration de l'API Google Maps dans la plateforme (\texttt{maps.jsp}, \texttt{js/app.js})
+    \item Affichage de marqueurs pour chaque événement avec info-bulle détaillée
+    \item Filtres dynamiques (par type d'événement, date, région, club organisateur)
+    \item Recherche d'événements par titre ou localisation
+    \item Affichage responsive sur desktop et mobile
+    \item Synchronisation avec la base de données (ajout/suppression/modification d'événements)
+    \item Fichiers concernés : \texttt{jsp/maps.jsp}, \texttt{js/app.js}, CSS associé
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+\begin{enumerate}
+    \item Un utilisateur accède à la page "Événements sur la carte" depuis le menu principal.
+    \item Il visualise tous les événements sur la carte, chaque événement étant représenté par un marqueur.
+    \item Il clique sur un marqueur pour afficher une info-bulle avec les détails de l'événement (titre, description, lieu, date, club organisateur).
+    \item Il utilise la barre de recherche pour trouver un événement spécifique ou filtre par région, type ou date.
+    \item Un président ou la fédération peut ajouter ou modifier la localisation d'un événement (si autorisé).
+    \item Les membres peuvent repérer facilement les événements proches de chez eux et s'y inscrire.
+\end{enumerate}
+
+\subsection{Exemple d'Affichage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{maps-exemple.png}
+\end{center}
+
+% Nouvelle tâche : Calendrier
+
+\section{Tâche 2 : Module Calendrier Interactif}
+
+\subsection{Description}
+Réalisation d'un module calendrier interactif permettant à tous les utilisateurs de visualiser, filtrer et interagir avec les événements du club (tournois, réunions, deadlines, etc.). Le calendrier est accessible depuis le dashboard et propose une vue mensuelle, hebdomadaire et une liste des événements à venir. Chaque événement est coloré selon son statut (planifié, terminé, annulé) et un clic sur une date ou un événement affiche les détails, la liste des participants, et permet de s'inscrire ou de se désinscrire si l'utilisateur y est autorisé.
+
+\subsection{Composants Réalisés}
+\begin{itemize}
+    \item Affichage d'un calendrier dynamique (FullCalendar.js ou composant personnalisé)
+    \item Synchronisation avec la base de données des événements (EvenementDAO)
+    \item Filtres par type d'événement, statut, club organisateur
+    \item Affichage des détails d'un événement (popup ou panneau latéral)
+    \item Actions rapides : inscription, désinscription, ajout au calendrier personnel
+    \item Notifications automatiques pour les événements à venir
+    \item Responsive design pour mobile et desktop
+    \item Fichiers concernés : \texttt{jsp/events/calendar.jsp}, \texttt{js/events.js}, CSS associé
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+\begin{enumerate}
+    \item Un membre consulte le calendrier pour voir les prochains tournois et réunions.
+    \item Il clique sur un événement pour voir les détails (lieu, date, description, participants).
+    \item Il s'inscrit à un événement directement depuis le calendrier.
+    \item Un président ajoute un nouvel événement via le calendrier (formulaire intégré).
+    \item La Fédération filtre les événements par club ou par statut pour planifier ses actions.
+    \item Les utilisateurs reçoivent une notification automatique la veille d'un événement auquel ils sont inscrits.
+\end{enumerate}
+
+\subsection{Exemple d'Affichage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{calendrier-exemple.png}
+\end{center}
+
+% Nouvelle tâche : Messagerie
+
+\section{Tâche 3 : Module Messagerie Interne}
+
+\subsection{Description}
+Développement d'un module de messagerie interne complet permettant aux membres, présidents et à la fédération d'échanger des messages de manière sécurisée et centralisée. Le module comprend :
+\begin{itemize}
+    \item Une boîte de réception (messages reçus)
+    \item Une boîte d'envoi (messages envoyés)
+    \item Un formulaire de rédaction de message
+    \item Un système d'onglets pour naviguer entre Réception et Envoyés
+    \item Un design harmonisé (cartes, couleurs, boutons, responsive)
+\end{itemize}
+Chaque message contient le sujet, le club destinataire ou expéditeur, la date d'envoi, et le contenu. Les utilisateurs peuvent filtrer les messages par club, date ou sujet, et sont notifiés en temps réel lors de la réception d'un nouveau message (badge de notification, popup, etc.).
+
+Le module gère également :
+\begin{itemize}
+    \item La sécurité et la confidentialité des échanges (seuls les membres autorisés peuvent lire ou envoyer des messages)
+    \item L'intégration avec le système de notifications global (nouveau message, message lu, etc.)
+    \item L'ergonomie (navigation rapide, recherche, pagination)
+    \item L'accessibilité sur mobile et desktop
+\end{itemize}
+
+\subsection{Composants Réalisés}
+\begin{itemize}
+    \item Boîte de réception avec affichage des messages reçus (\texttt{inbox.jsp})
+    \item Boîte d'envoi (messages envoyés, \texttt{sent.jsp})
+    \item Formulaire de rédaction de message (\texttt{compose.jsp})
+    \item Système d'onglets pour naviguer entre Réception/Envoyés
+    \item Filtres par club, date, sujet
+    \item Notification de nouveau message (badge, popup)
+    \item Sécurité des accès et gestion des droits
+    \item Fichiers concernés : \texttt{jsp/messages/inbox.jsp}, \texttt{jsp/messages/sent.jsp}, \texttt{jsp/messages/compose.jsp}, CSS associé
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+\begin{enumerate}
+    \item Un membre consulte sa boîte de réception pour lire les messages envoyés par son président ou la fédération.
+    \item Il utilise les filtres pour retrouver un message précis (par club, date, sujet).
+    \item Il rédige un nouveau message à destination d'un club ou d'un membre spécifique.
+    \item Il reçoit une notification en temps réel lorsqu'un nouveau message arrive.
+    \item Un président envoie un message groupé à tous les membres de son club.
+    \item La fédération communique des informations importantes à tous les présidents.
+\end{enumerate}
+
+\subsection{Exemple d'Affichage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{messagerie-exemple.png}
+\end{center}
+
+
+\section{Tâche 4 : Gestion des Événements}
+
+\subsection{Description}
+Développement d'un module complet de gestion des événements permettant à la Fédération, aux Présidents et aux Membres de créer, consulter, modifier et supprimer des événements (tournois, réunions, rencontres, etc.). Le module inclut l'affichage des événements planifiés, la gestion des inscriptions, la visualisation des détails, et la gestion des statuts (planifié, annulé, terminé). L'objectif est de centraliser toute la gestion événementielle de la plateforme avec une interface moderne et intuitive.
+
+\subsection{Composants Réalisés}
+\begin{itemize}
+    \item Backend :
+    \begin{itemize}
+        \item \texttt{EvenementDAO.java} : Accès et gestion des événements en base
+        \item \texttt{EvenementServlet.java} : Servlet principale pour la gestion des événements (CRUD, actions)
+        \item Intégration avec le module de notifications (création automatique de notifications)
+    \end{itemize}
+    \item Frontend :
+    \begin{itemize}
+        \item \texttt{jsp/events/list.jsp} : Liste des événements (cartes/tableau, filtres, actions)
+        \item \texttt{jsp/events/create.jsp} : Formulaire de création
+        \item \texttt{jsp/events/edit.jsp} : Formulaire de modification
+        \item \texttt{jsp/event-details.jsp} : Détails d'un événement (infos, participants, actions)
+    \end{itemize}
+    \item Validation côté client et serveur, gestion des droits selon le rôle
+    \item Synchronisation avec le calendrier et la carte (affichage des événements)
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+\begin{enumerate}
+    \item Un président crée un nouveau tournoi via le formulaire dédié.
+    \item Un membre consulte la liste des événements et s'inscrit à un tournoi.
+    \item La Fédération modifie ou annule un événement existant.
+    \item Tous les utilisateurs peuvent consulter les détails d'un événement (lieu, date, description, participants).
+    \item Les événements sont automatiquement affichés sur la carte et dans le calendrier.
+\end{enumerate}
+
+\subsection{Emplacements des Écrans}
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+	oprule
+	extbf{Fonctionnalité} & \textbf{Chemin JSP} \\
+\midrule
+Liste des événements & \texttt{/jsp/events/list.jsp} \\
+Création d'événement & \texttt{/jsp/events/create.jsp} \\
+Modification d'événement & \texttt{/jsp/events/edit.jsp} \\
+Détails d'événement & \texttt{/jsp/event-details.jsp} \\
+\bottomrule
+\end{tabular}
+\caption{Emplacements des pages de gestion d'événements}
+\end{table}
+
+\section{Tâche 3 : Tableau des Participants et Statistiques}
+
+\subsection{Description}
+
+Développement d'une interface dynamique permettant d'afficher et de gérer les participants aux événements avec des statistiques détaillées. Cette fonctionnalité inclut également la sélection de représentants par les présidents de clubs.
+
+\subsection{Base de Données}
+
+\subsubsection{Table Participation}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE Participation (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  dateInvitation DATE,
+  dateConfirmation DATE,
+  statut ENUM('INVITE', 'CONFIRME', 'REFUSE') NOT NULL,
+  membre_id BIGINT NOT NULL,
+  evenement_id BIGINT NOT NULL,
+  FOREIGN KEY (membre_id) REFERENCES Utilisateur(id) ON DELETE CASCADE,
+  FOREIGN KEY (evenement_id) REFERENCES Evenement(id) ON DELETE CASCADE
+);
+\end{lstlisting}
+
+\subsection{Composants Réalisés}
+
+\subsubsection{Backend}
+
+\begin{itemize}
+    \item \texttt{ParticipationDAO.java} : Couche d'accès aux données pour les participations
+    \begin{itemize}
+        \item \texttt{addParticipants()} : Ajout de participants à un événement
+        \item \texttt{getParticipantsByEvenement()} : Récupération des participations d'un événement
+        \item \texttt{getParticipantMembersByEvenement()} : Récupération des membres participants avec leurs informations
+        \item \texttt{isParticipating()} : Vérification si un membre participe déjà
+        \item \texttt{removeParticipant()} : Retrait d'un participant
+        \item \texttt{getClubParticipantCount()} : Nombre de participants par club
+    \end{itemize}
+    
+    \item \texttt{EventDetailsServlet.java} : Affichage des détails d'un événement avec statistiques
+    \begin{itemize}
+        \item URL : \texttt{/federation/event-details}
+        \item Récupération de l'événement et de ses participants
+        \item Groupement des participants par club
+        \item Calcul des statistiques :
+        \begin{itemize}
+            \item Nombre total de participants
+            \item Nombre de clubs représentés
+            \item Répartition par club
+        \end{itemize}
+    \end{itemize}
+    
+    \item \texttt{SelectRepresentativesServlet.java} : Sélection de représentants par un président
+    \begin{itemize}
+        \item URL : \texttt{/president/select-representatives}
+        \item GET : Affichage de la liste des membres du club disponibles
+        \item POST : Enregistrement de la sélection (maximum 2 représentants)
+        \item Validation : Limite de 2 jours avant l'événement pour la sélection
+        \item Création de notifications pour les membres sélectionnés
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Frontend}
+
+\begin{itemize}
+    \item \texttt{jsp/event-details.jsp} : Page de détails avec statistiques
+    \begin{itemize}
+        \item Informations générales de l'événement
+        \item Tableau des participants groupés par club
+        \item Statistiques :
+        \begin{itemize}
+            \item Total des participants
+            \item Nombre de clubs représentés
+            \item Répartition visuelle par club
+        \end{itemize}
+        \item Liste détaillée avec nom, prénom, email, club
+    \end{itemize}
+    
+    \item \texttt{jsp/select-representatives.jsp} : Interface de sélection de représentants
+    \begin{itemize}
+        \item Liste des membres du club du président
+        \item Cases à cocher pour sélectionner (maximum 2)
+        \item Informations sur l'événement
+        \item Validation côté client de la limite de 2 représentants
+        \item Affichage des représentants déjà sélectionnés
+    \end{itemize}
+    
+    \item \texttt{jsp/events/inscriptions.jsp} : Page de gestion des inscriptions
+    \begin{itemize}
+        \item Liste des participants avec statut
+        \item Actions de gestion (confirmer, refuser)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+
+\subsubsection{Scénario 1 : Consultation du Tableau des Participants}
+
+\begin{enumerate}
+    \item La Fédération accède à un événement et clique sur "Voir détails"
+    \item URL : \texttt{/federation/event-details?id=<eventId>}
+    \item Le système récupère :
+    \begin{itemize}
+        \item Les informations de l'événement
+        \item Tous les participants via \texttt{ParticipationDAO.getParticipantMembersByEvenement()}
+        \item Les clubs des participants
+    \end{itemize}
+    \item Affichage :
+    \begin{itemize}
+        \item En-tête avec informations de l'événement
+        \item Statistiques globales :
+        \begin{itemize}
+            \item Total participants : X
+            \item Nombre de clubs : Y
+        \end{itemize}
+        \item Tableau groupé par club :
+        \begin{itemize}
+            \item Nom du club
+            \item Liste des membres avec nom, prénom, email
+            \item Nombre de participants par club
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Scénario 2 : Sélection de Représentants par un Président}
+
+\begin{enumerate}
+    \item Un Président se connecte et accède à son tableau de bord
+    \item Il voit la liste des événements planifiés
+    \item Il clique sur "Sélectionner représentants" pour un événement
+    \item Vérification que l'événement est à plus de 2 jours
+    \item Affichage de la liste des membres de son club
+    \item Sélection de maximum 2 membres (cases à cocher)
+    \item Soumission du formulaire
+    \item Le système :
+    \begin{itemize}
+        \item Valide la sélection (max 2 membres)
+        \item Vérifie que l'événement est toujours ouvert à la sélection
+        \item Ajoute les participants dans la table Participation
+        \item Crée des notifications pour les membres sélectionnés
+        \item Affiche un message de succès
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Scénario 3 : Affichage des Statistiques}
+
+\begin{enumerate}
+    \item Sur la page de détails d'un événement
+    \item Calcul en temps réel des statistiques :
+    \begin{itemize}
+        \item Total de participants : Compte du nombre de participations
+        \item Nombre de clubs uniques : Compte des clubs distincts
+        \item Répartition par club : Groupement des participants
+    \end{itemize}
+    \item Affichage visuel avec graphiques ou tableaux
+\end{enumerate}
+
+\subsection{Emplacements des Écrans}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Fonctionnalité} & \textbf{Chemin JSP} \\
+\midrule
+Détails avec statistiques & \texttt{/jsp/event-details.jsp} \\
+Sélection représentants & \texttt{/jsp/select-representatives.jsp} \\
+Gestion inscriptions & \texttt{/jsp/events/inscriptions.jsp} \\
+\bottomrule
+\end{tabular}
+\caption{Emplacements des pages de gestion des participants}
+\end{table}
+
+
+\section{Tâche 5 : Système de Notifications}
+
+\subsection{Description}
+Mise en place d'un système complet de notifications permettant d'informer en temps réel les utilisateurs (membres, présidents, fédération) des événements importants : création d'événements, sélection comme représentant, nouveaux messages, acceptation de demande de club, etc. Les notifications sont visibles sous forme de badge, de modal ou de messages contextuels, et sont intégrées dans toute la plateforme.
+
+\subsection{Composants Réalisés}
+\begin{itemize}
+    \item Backend :
+    \begin{itemize}
+        \item \texttt{NotificationDAO.java} : Gestion des notifications en base
+        \item \texttt{NotificationServlet.java} : API REST pour la gestion et la récupération des notifications
+        \item Intégration dans les autres servlets (création automatique lors d'événements clés)
+    \end{itemize}
+    \item Frontend :
+    \begin{itemize}
+        \item Badge de notification dans les dashboards (nombre de notifications non lues)
+        \item Modal de notifications (liste détaillée, marquage comme lu)
+        \item Rafraîchissement dynamique via AJAX
+        \item Affichage contextuel lors d'une nouvelle notification
+    \end{itemize}
+    \item Types de notifications : création d'événement, sélection représentant, nouveau message, validation de demande, etc.
+    \item Sécurité : chaque utilisateur ne voit que ses propres notifications
+\end{itemize}
+
+\subsection{Scénarios d'Utilisation}
+\begin{enumerate}
+    \item Un membre reçoit une notification lorsqu'il est sélectionné comme représentant pour un événement.
+    \item Un président reçoit une notification lorsqu'un membre s'inscrit à un tournoi.
+    \item Tous les utilisateurs voient un badge mis à jour en temps réel lors de la création d'un nouvel événement.
+    \item Un utilisateur consulte le détail de ses notifications dans un modal dédié.
+    \item Les notifications sont automatiquement marquées comme lues après consultation.
+\end{enumerate}
+
+\subsection{Emplacements des Écrans}
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+	oprule
+	extbf{Fonctionnalité} & \textbf{Chemin JSP} \\
+\midrule
+Badge de notification & En-tête des dashboards \\
+Modal de notifications & Dashboards (Membre, Président) \\
+API REST & \texttt{/notifications} \\
+\bottomrule
+\end{tabular}
+\caption{Emplacements des composants de notification}
+\end{table}
+
+\section{Conclusion}
+
+
+Ce rapport présente les principales tâches réalisées dans le cadre du projet de plateforme de gestion de clubs d'échecs :
+
+
+\begin{enumerate}
+    \item \textbf{Module Maps (Événements)} : Visualisation géographique interactive de tous les événements (tournois, réunions, etc.)
+    \item \textbf{Module Calendrier et Événements} : Affichage interactif des événements et tournois à venir
+    \item \textbf{Module Messagerie} : Système de messagerie interne harmonisé (réception, envoi, rédaction)
+    \item \textbf{Tableau des Participants et Statistiques} : Gestion dynamique des participants avec statistiques détaillées
+    \item \textbf{Système de Notifications} : Notifications en temps réel pour tous les utilisateurs
+\end{enumerate}
+
+Toutes ces fonctionnalités ont été développées en suivant les meilleures pratiques de développement web Java/JEE, avec une architecture modulaire, une séparation claire des responsabilités, et une interface utilisateur moderne et responsive.
+
+\section{Annexes}
+
+\subsection{Structure des Packages}
+
+\begin{verbatim}
+com.projet.jee/
+├── model/
+│   ├── Utilisateur.java
+│   ├── Evenement.java
+│   ├── Participation.java
+│   ├── Notification.java
+│   └── Club.java
+├── dao/
+│   ├── UtilisateurDAO.java
+│   ├── EvenementDAO.java
+│   ├── ParticipationDAO.java
+│   ├── NotificationDAO.java
+│   └── ClubDAO.java
+└── Servlets/
+    ├── LoginServlet.java
+    ├── RegisterServlet.java
+    ├── ProfileServlet.java
+    ├── EvenementServlet.java
+    ├── EventDetailsServlet.java
+    ├── SelectRepresentativesServlet.java
+    └── NotificationServlet.java
+\end{verbatim}
+
+\subsection{Structure des Pages JSP}
+
+\begin{verbatim}
+jsp/
+├── auth/
+│   ├── login.jsp
+│   ├── register.jsp
+│   └── profile.jsp
+├── events/
+│   ├── list.jsp
+│   ├── create.jsp
+│   ├── edit.jsp
+│   └── inscriptions.jsp
+├── event-details.jsp
+├── select-representatives.jsp
+├── membre-dashboard.jsp
+├── president-dashboard.jsp
+└── federation-dashboard.jsp
+\end{verbatim}
+
+\end{document}
+
+
