@@ -19,9 +19,12 @@ Application web de gestion des clubs d'échecs développée dans le cadre du mod
 2. Démarrer les services Apache et MySQL
 3. Démarrer le serveur Tomcat
 
-2.3 Configuration de la base de données
 1. Lancer phpMyAdmin via WAMP/XAMPP (http://localhost/phpmyadmin)
 2. Créer une nouvelle base de données nommée 'chess_club_db'
+3. Importer le fichier : chess_club_db.sql (à la racine du projet)
+   - Ce fichier contient toutes les tables nécessaires et des données de test
+   - Comptes de test pré-créés (voir section 4.1)
+   - Événements et clubs de démonstration
 
 
 2.4 Configuration de l'application
