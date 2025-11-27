@@ -22,8 +22,7 @@ Application web de gestion des clubs d'échecs développée dans le cadre du mod
 2.3 Configuration de la base de données
 1. Lancer phpMyAdmin via WAMP/XAMPP (http://localhost/phpmyadmin)
 2. Créer une nouvelle base de données nommée 'chess_club_db'
-3. Importer le script d'initialisation : db_init.sql
-4. Importer les données de test : data_test.sql
+
 
 2.4 Configuration de l'application
 1. Modifier les informations de connexion dans :
@@ -69,35 +68,69 @@ Le compte ne sera actif qu'après avoir cliqué sur ce lien de vérification.
    ```
 5. Accéder à : http://localhost:8080/GestionClubsChess-1.0-SNAPSHOT/
 
-4. GUIDE DE TEST
-----------------
+4. COMPTES DE TEST ET DÉMARRAGE RAPIDE
+------------------------------------
 
-4.1 Création d'un nouveau club (en tant que membre)
-1. Connectez-vous en tant que membre (membre1@club1.ma / membre123)
-2. Accédez à la section "Créer un club"
-3. Remplissez le formulaire avec les informations du club
-4. Soumettez la demande
+4.1 Comptes de test (Mot de passe pour tous : "password")
+------------------------------------------------------
+→ ADMINISTRATEUR FÉDÉRAL
+   • Email : talbimanal28@gmail.com
+   • Rôle : Accès complet au système
 
-4.2 Validation du club (en tant qu'administrateur fédéral)
-1. Déconnectez-vous et connectez-vous en tant qu'administrateur (admin@federation.ma / admin123)
-2. Allez dans la section "Demandes de clubs"
-3. Trouvez la demande du nouveau club
-4. Cliquez sur "Valider" pour approuver le club
+→ PRÉSIDENT DE CLUB
+   • Email : nassimelkaddaoui18@gmail.com
+   • Club : El Haiaa El Maghrebia
+   • Rôle : Gestion complète du club
 
-4.3 Rejoindre le club (en tant que membre)
-1. Reconnectez-vous en tant que membre
-2. Allez dans la section "Rejoindre un club"
-3. Sélectionnez le club que vous venez de créer
-4. Cliquez sur "Rejoindre"
+→ MEMBRE
+   • Email : krichi.2003.sara@gmail.com
+   • Rôle : Membre standard
 
-4.4 Gestion des membres (en tant que président)
-1. Connectez-vous en tant que président (president@club1.ma / president123)
-2. Allez dans la section "Gestion des membres"
-3. Approuvez la demande d'adhésion du membre
-4. Vous pouvez maintenant gérer les rôles et les permissions des membres
+4.2 Clubs disponibles
+-------------------
+→ EL HAIAA EL MAGHREBIA
+   • Description : Club d'échecs de renom au Maroc
+   • Logo : /uploads/logos/chess_club_haiaa.jpeg
+   • Président : Nassim El Kaddaoui
 
-4.5 Création d'un événement
-1. En tant que président, allez dans "Gestion des événements"
+4.3 Événements de test
+--------------------
+→ CHAMPIONNAT MAROCAIN DES ÉCHECS
+   • Date : 12-27 Déc 2025
+   • Lieu : Complexe Sportif Mohammed V, Casablanca
+   • Statut : À venir
+
+→ OPEN INTERNATIONAL DE RABAT
+   • Date : 15-17 Nov 2025
+   • Lieu : Palais des Congrès, Rabat
+   • Statut : Terminé
+
+4.4 Guide de test rapide
+----------------------
+
+→ Scénario 1 : Inscription et vérification
+1. Créez un nouveau compte membre
+2. Vérifiez votre email (lien dans les logs du serveur)
+3. Connectez-vous avec vos identifiants
+4. Rejoignez le club "El Haiaa El Maghrebia"
+
+→ Scénario 2 : Gestion d'événement (Président)
+1. Connectez-vous en tant que président
+2. Créez un nouvel événement
+3. Vérifiez l'événement dans la liste
+4. Gérez les inscriptions
+
+→ Scénario 3 : Participation à un événement (Membre)
+1. Connectez-vous en tant que membre
+2. Parcourez les événements disponibles
+3. Inscrivez-vous à un événement
+4. Consultez votre tableau de bord
+
+4.5 Dépannage rapide
+------------------
+• Problème de connexion ? Vérifiez la vérification d'email
+• Données manquantes ? Rafraîchissez la page ou videz le cache
+• Problème de base de données ? Vérifiez les logs Tomcat
 2. Cliquez sur "Créer un événement"
 3. Remplissez les détails de l'événement
 4. Enregistrez l'événement

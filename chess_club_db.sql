@@ -737,19 +737,6 @@ INSERT INTO Parametre (cle, valeur, type_donnee, categorie, description, modifia
 ('FORMAT_DOCUMENTS_AUTORISES', 'pdf,doc,docx,xls,xlsx,ppt,pptx', 'TEXTE', 'UPLOAD', 'Extensions de documents autorisées', TRUE);
 
 -- =================================================================
--- Insert default admin user (password: admin123)
--- =================================================================
-INSERT INTO Utilisateur (nom, prenom, email, motDePasse, cin, role, statut, est_verifie) 
-VALUES ('Admin', 'System', 'admin@federation.ma', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQMRhSO.', 'EE123456', 'FEDERATION', 'ACTIF', TRUE);
-
--- =================================================================
--- Create database user with appropriate privileges
--- =================================================================
--- CREATE USER IF NOT EXISTS 'chess_user'@'localhost' IDENTIFIED BY 'secure_password';
--- GRANT SELECT, INSERT, UPDATE, DELETE ON chess_club_db.* TO 'chess_user'@'localhost';
--- FLUSH PRIVILEGES;
-
--- =================================================================
 -- Create indexes for better performance
 -- =================================================================
 ALTER TABLE Utilisateur ADD FULLTEXT INDEX idx_recherche (nom, prenom, email, cin);
